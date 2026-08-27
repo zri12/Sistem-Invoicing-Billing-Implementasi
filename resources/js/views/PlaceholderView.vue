@@ -1,0 +1,2 @@
+<script setup>import { useRoute } from 'vue-router'; import BaseCard from '@/components/ui/BaseCard.vue'; const route = useRoute();</script>
+<template><div class="foundation-page p-6"><BaseCard><h1 class="text-base font-semibold text-[#172033]">{{ route.meta.title }}</h1><p class="mt-2 text-sm text-[#667085]">Halaman ini disiapkan sebagai route shell. Implementasi modul bisnis dilakukan pada tahap berikutnya.</p></BaseCard></div></template>
