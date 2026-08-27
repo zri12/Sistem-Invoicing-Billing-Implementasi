@@ -4,17 +4,21 @@ import { useRouter } from 'vue-router';
 import { AlertCircle, ArrowRight, CheckCircle, Clock, FileText, MinusCircle, TrendingDown, TrendingUp } from 'lucide-vue-next';
 import BaseBadge from '@/components/ui/BaseBadge.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
-import { dashboardChart, dashboardExpenses, dashboardIncomes, dashboardInvoices } from '@/data/dashboardMock';
+import { dashboardChart, dashboardExpenses, dashboardIncomes } from '@/data/dashboardMock';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import { useInvoiceStore } from '@/stores/invoice';
+import { usePaymentStore } from '@/stores/payment';
 
 const router = useRouter();
+const invoiceStore = useInvoiceStore();
+const paymentStore = usePaymentStore();
 const period = ref('Bulan Ini');
 const activeChart = ref(null);
 const chartMax = 10000000;
 const chartTicks = [10000000, 7500000, 5000000, 2500000, 0];
 const metrics = computed(() => ({
-    totalInvoice: dashboardInvoices.filter((invoice) => invoice.documentStatus !== 'dibatalkan').length,
-    outstanding: dashboardInvoices.filter((invoice) => invoice.documentStatus === 'diterbitkan').reduce((total, invoice) => total + Math.max(0, invoice.total - invoice.paid), 0),
+    totalInvoice: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled').length,
+    outstanding: invoiceStore.invoices.filter((invoice) => invoice.status === 'published').reduce((total, invoice) => total + paymentStore.paymentSummaryByInvoice(invoice).remaining, 0),
     income: dashboardIncomes.reduce((total, value) => total + value, 0),
     expense: dashboardExpenses.reduce((total, value) => total + value, 0),
 }));
@@ -29,13 +33,13 @@ const statusRows = computed(() => [
     { key: 'dibayar_sebagian', label: 'Dibayar Sebagian', color: '#D97706', icon: Clock },
     { key: 'lunas', label: 'Lunas', color: '#16A34A', icon: CheckCircle },
     { key: 'jatuh_tempo', label: 'Jatuh Tempo', color: '#DC2626', icon: AlertCircle },
-].map((item) => ({ ...item, count: dashboardInvoices.filter((invoice) => invoice.documentStatus !== 'dibatalkan' && invoice.paymentStatus === item.key).length })));
-const recentInvoices = computed(() => [...dashboardInvoices].sort((left, right) => right.issuedAt.localeCompare(left.issuedAt)).slice(0, 5));
+].map((item) => ({ ...item, count: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled' && paymentStore.paymentSummaryByInvoice(invoice).status === item.key).length })));
+const recentInvoices = computed(() => invoiceStore.invoices.map((invoice) => ({ ...invoice, issuedAt: invoice.date, dueAt: invoice.dueDate, total: paymentStore.paymentSummaryByInvoice(invoice).total, paymentStatus: paymentStore.paymentSummaryByInvoice(invoice).status })).sort((left, right) => right.issuedAt.localeCompare(left.issuedAt)).slice(0, 5));
 const paymentBadge = (status) => ({ belum_dibayar: ['Belum Dibayar', 'neutral'], dibayar_sebagian: ['Dibayar Sebagian', 'warning'], lunas: ['Lunas', 'success'], jatuh_tempo: ['Jatuh Tempo', 'danger'] }[status]);
 const chartHeight = (value) => Math.round((value / chartMax) * 134);
 const chartY = (value) => 142 - chartHeight(value);
 const goTo = (name) => router.push({ name });
-const viewInvoice = (id) => router.push({ name: 'invoice', query: { invoice: id } });
+const viewInvoice = (id) => router.push({ name: 'invoice-detail', params: { id } });
 </script>
 
 <template>
