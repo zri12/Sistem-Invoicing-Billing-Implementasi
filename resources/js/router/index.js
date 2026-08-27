@@ -8,6 +8,10 @@ import Clients from '@/views/master-data/Clients.vue';
 import Vendors from '@/views/master-data/Vendors.vue';
 import Products from '@/views/master-data/Products.vue';
 import Accounts from '@/views/master-data/Accounts.vue';
+import InvoiceList from '@/views/invoice/InvoiceList.vue';
+import InvoiceForm from '@/views/invoice/InvoiceForm.vue';
+import InvoiceDetail from '@/views/invoice/InvoiceDetail.vue';
+import InvoicePreview from '@/views/invoice/InvoicePreview.vue';
 
 const placeholders = [['dashboard', 'Dashboard'], ['klien', 'Klien'], ['vendor', 'Vendor'], ['produk-layanan', 'Produk & Layanan'], ['rekening', 'Rekening'], ['invoice', 'Invoice'], ['billing', 'Billing'], ['pembayaran', 'Pembayaran'], ['pemasukan', 'Pemasukan'], ['pengeluaran', 'Pengeluaran'], ['laporan', 'Laporan'], ['data-perusahaan', 'Data Perusahaan'], ['template-invoice', 'Template Invoice'], ['penomoran-invoice', 'Penomoran Invoice'], ['pengguna', 'Pengguna & Hak Akses']];
 
@@ -23,7 +27,12 @@ const router = createRouter({
         { path: '/vendor', name: 'vendor', component: Vendors, meta: appMeta('Vendor') },
         { path: '/produk-layanan', name: 'produk-layanan', component: Products, meta: appMeta('Produk & Layanan') },
         { path: '/rekening', name: 'rekening', component: Accounts, meta: appMeta('Rekening') },
-        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
+        { path: '/invoice', name: 'invoice', component: InvoiceList, meta: appMeta('Invoice') },
+        { path: '/invoice/create', name: 'invoice-create', component: InvoiceForm, meta: { ...appMeta('Buat Invoice'), adminOnly: true } },
+        { path: '/invoice/:id/edit', name: 'invoice-edit', component: InvoiceForm, meta: { ...appMeta('Edit Invoice'), adminOnly: true } },
+        { path: '/invoice/:id/preview', name: 'invoice-preview', component: InvoicePreview, meta: { ...appMeta('Preview Invoice'), layout: 'preview' } },
+        { path: '/invoice/:id', name: 'invoice-detail', component: InvoiceDetail, meta: appMeta('Detail Invoice') },
+        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
     ],
 });
 
@@ -32,6 +41,7 @@ router.beforeEach((to) => {
     const auth = useAuthStore();
     if (to.meta.authRequired && !auth.isAuthenticated) return { name: 'login' };
     if (to.meta.guestOnly && auth.isAuthenticated) return { name: 'dashboard' };
+    if (to.meta.adminOnly && auth.role !== 'admin') return { name: 'invoice' };
 });
 router.afterEach(() => { document.title = 'Sistem Invoicing & Billing | DEVSPACE'; });
 export default router;
