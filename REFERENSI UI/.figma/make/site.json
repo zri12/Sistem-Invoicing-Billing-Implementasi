@@ -1,0 +1,15 @@
+{
+  "title": "Sistem Invoicing & Billing | DEVSPACE",
+  "description": "Sistem Invoicing & Billing internal PT. Ruang Kreasi Aplikasi",
+  "language": "id",
+  "icons": {
+    "icon": "/favicon.svg"
+  },
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
