@@ -4,23 +4,25 @@ import { useRouter } from 'vue-router';
 import { AlertCircle, ArrowRight, CheckCircle, Clock, FileText, MinusCircle, TrendingDown, TrendingUp } from 'lucide-vue-next';
 import BaseBadge from '@/components/ui/BaseBadge.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
-import { dashboardChart, dashboardExpenses, dashboardIncomes } from '@/data/dashboardMock';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { useInvoiceStore } from '@/stores/invoice';
 import { usePaymentStore } from '@/stores/payment';
+import { useFinanceStore } from '@/stores/finance';
 
 const router = useRouter();
 const invoiceStore = useInvoiceStore();
 const paymentStore = usePaymentStore();
+const financeStore = useFinanceStore();
 const period = ref('Bulan Ini');
 const activeChart = ref(null);
-const chartMax = 10000000;
-const chartTicks = [10000000, 7500000, 5000000, 2500000, 0];
+const dashboardChart = computed(() => ['Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu'].map((label, index) => { const month=String(index+3).padStart(2,'0'); return { label, income: financeStore.allIncomes.filter((item)=>item.date.slice(5,7)===month).reduce((total,item)=>total+item.amount,0), expense: financeStore.expenses.filter((item)=>item.date.slice(5,7)===month).reduce((total,item)=>total+item.amount,0) }; }));
+const chartMax = computed(() => Math.max(10000000, ...dashboardChart.value.flatMap((item) => [item.income, item.expense])));
+const chartTicks = computed(() => [chartMax.value, chartMax.value * .75, chartMax.value * .5, chartMax.value * .25, 0]);
 const metrics = computed(() => ({
     totalInvoice: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled').length,
     outstanding: invoiceStore.invoices.filter((invoice) => invoice.status === 'published').reduce((total, invoice) => total + paymentStore.paymentSummaryByInvoice(invoice).remaining, 0),
-    income: dashboardIncomes.reduce((total, value) => total + value, 0),
-    expense: dashboardExpenses.reduce((total, value) => total + value, 0),
+    income: financeStore.allIncomes.reduce((total, value) => total + value.amount, 0),
+    expense: financeStore.expenses.reduce((total, value) => total + value.amount, 0),
 }));
 const summaryCards = computed(() => [
     { label: 'Total Invoice', value: String(metrics.value.totalInvoice), sub: 'invoice aktif', icon: FileText, accent: '#173B6C', route: 'invoice' },
@@ -36,7 +38,7 @@ const statusRows = computed(() => [
 ].map((item) => ({ ...item, count: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled' && paymentStore.paymentSummaryByInvoice(invoice).status === item.key).length })));
 const recentInvoices = computed(() => invoiceStore.invoices.map((invoice) => ({ ...invoice, issuedAt: invoice.date, dueAt: invoice.dueDate, total: paymentStore.paymentSummaryByInvoice(invoice).total, paymentStatus: paymentStore.paymentSummaryByInvoice(invoice).status })).sort((left, right) => right.issuedAt.localeCompare(left.issuedAt)).slice(0, 5));
 const paymentBadge = (status) => ({ belum_dibayar: ['Belum Dibayar', 'neutral'], dibayar_sebagian: ['Dibayar Sebagian', 'warning'], lunas: ['Lunas', 'success'], jatuh_tempo: ['Jatuh Tempo', 'danger'] }[status]);
-const chartHeight = (value) => Math.round((value / chartMax) * 134);
+const chartHeight = (value) => Math.round((value / chartMax.value) * 134);
 const chartY = (value) => 142 - chartHeight(value);
 const goTo = (name) => router.push({ name });
 const viewInvoice = (id) => router.push({ name: 'invoice-detail', params: { id } });
