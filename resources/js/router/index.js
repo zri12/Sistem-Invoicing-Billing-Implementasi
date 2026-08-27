@@ -12,6 +12,9 @@ import InvoiceList from '@/views/invoice/InvoiceList.vue';
 import InvoiceForm from '@/views/invoice/InvoiceForm.vue';
 import InvoiceDetail from '@/views/invoice/InvoiceDetail.vue';
 import InvoicePreview from '@/views/invoice/InvoicePreview.vue';
+import BillingList from '@/views/billing/BillingList.vue';
+import BillingDetail from '@/views/billing/BillingDetail.vue';
+import PaymentList from '@/views/payment/PaymentList.vue';
 
 const placeholders = [['dashboard', 'Dashboard'], ['klien', 'Klien'], ['vendor', 'Vendor'], ['produk-layanan', 'Produk & Layanan'], ['rekening', 'Rekening'], ['invoice', 'Invoice'], ['billing', 'Billing'], ['pembayaran', 'Pembayaran'], ['pemasukan', 'Pemasukan'], ['pengeluaran', 'Pengeluaran'], ['laporan', 'Laporan'], ['data-perusahaan', 'Data Perusahaan'], ['template-invoice', 'Template Invoice'], ['penomoran-invoice', 'Penomoran Invoice'], ['pengguna', 'Pengguna & Hak Akses']];
 
@@ -32,7 +35,10 @@ const router = createRouter({
         { path: '/invoice/:id/edit', name: 'invoice-edit', component: InvoiceForm, meta: { ...appMeta('Edit Invoice'), adminOnly: true } },
         { path: '/invoice/:id/preview', name: 'invoice-preview', component: InvoicePreview, meta: { ...appMeta('Preview Invoice'), layout: 'preview' } },
         { path: '/invoice/:id', name: 'invoice-detail', component: InvoiceDetail, meta: appMeta('Detail Invoice') },
-        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
+        { path: '/billing', name: 'billing', component: BillingList, meta: appMeta('Billing') },
+        { path: '/billing/:invoiceId', name: 'billing-detail', component: BillingDetail, meta: appMeta('Detail Billing') },
+        { path: '/pembayaran', name: 'pembayaran', component: PaymentList, meta: appMeta('Pembayaran') },
+        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice', 'billing', 'pembayaran'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
     ],
 });
 
