@@ -16,7 +16,10 @@ const form = reactive({ ...settings.company });
 const readOnly = computed(() => auth.role === 'manager');
 const choose = (key, event) => {
     const file = event.target.files?.[0];
-    if (file?.type.startsWith('image/')) form[key] = URL.createObjectURL(file);
+    if (file?.type.startsWith('image/')) {
+        if (form[key]?.startsWith('blob:')) URL.revokeObjectURL(form[key]);
+        form[key] = URL.createObjectURL(file);
+    }
 };
 const save = () => { settings.saveCompany(form); ui.notify('Data perusahaan berhasil disimpan.'); };
 </script>

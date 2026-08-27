@@ -53,6 +53,7 @@ const router = createRouter({
         { path: '/penomoran-invoice', name: 'penomoran-invoice', component: Numbering, meta: appMeta('Penomoran Invoice') },
         { path: '/pengguna', name: 'pengguna', component: Users, meta: { ...appMeta('Pengguna & Hak Akses'), adminOnly: true } },
         ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice', 'billing', 'pembayaran', 'pemasukan', 'pengeluaran', 'laporan', 'data-perusahaan', 'template-invoice', 'penomoran-invoice', 'pengguna'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
+        { path: '/:pathMatch(.*)*', redirect: () => useAuthStore().isAuthenticated ? '/dashboard' : '/login' },
     ],
 });
 
