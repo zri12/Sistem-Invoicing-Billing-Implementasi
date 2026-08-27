@@ -17,6 +17,7 @@ import BillingDetail from '@/views/billing/BillingDetail.vue';
 import PaymentList from '@/views/payment/PaymentList.vue';
 import IncomeList from '@/views/finance/IncomeList.vue';
 import ExpenseList from '@/views/finance/ExpenseList.vue';
+import Reports from '@/views/reports/Reports.vue';
 
 const placeholders = [['dashboard', 'Dashboard'], ['klien', 'Klien'], ['vendor', 'Vendor'], ['produk-layanan', 'Produk & Layanan'], ['rekening', 'Rekening'], ['invoice', 'Invoice'], ['billing', 'Billing'], ['pembayaran', 'Pembayaran'], ['pemasukan', 'Pemasukan'], ['pengeluaran', 'Pengeluaran'], ['laporan', 'Laporan'], ['data-perusahaan', 'Data Perusahaan'], ['template-invoice', 'Template Invoice'], ['penomoran-invoice', 'Penomoran Invoice'], ['pengguna', 'Pengguna & Hak Akses']];
 
@@ -42,7 +43,8 @@ const router = createRouter({
         { path: '/pembayaran', name: 'pembayaran', component: PaymentList, meta: appMeta('Pembayaran') },
         { path: '/pemasukan', name: 'pemasukan', component: IncomeList, meta: appMeta('Pemasukan') },
         { path: '/pengeluaran', name: 'pengeluaran', component: ExpenseList, meta: appMeta('Pengeluaran') },
-        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice', 'billing', 'pembayaran', 'pemasukan', 'pengeluaran'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
+        { path: '/laporan', name: 'laporan', component: Reports, meta: appMeta('Laporan') },
+        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice', 'billing', 'pembayaran', 'pemasukan', 'pengeluaran', 'laporan'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
     ],
 });
 
