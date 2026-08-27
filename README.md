@@ -18,8 +18,23 @@ Project Kerja Praktik:
 
 ## Struktur Awal Repository
 
+Struktur utama juga mencakup `ASSETS/` sebagai asset branding, invoice, dan dokumen referensi original/resmi. Folder ini berbeda dari `REFERENSI UI/`: asset visual dan dokumen resmi berasal dari `ASSETS/`, sedangkan layout serta flow UI aplikasi berasal dari `REFERENSI UI/`.
+
 ```text
 Sistem-Invoicing-Billing/
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── public/
+├── resources/
+├── routes/
+├── storage/
+├── tests/
+│
+├── ASSETS/
+│   └── Asset branding, invoice, dan dokumen referensi original/resmi
+│
 ├── docs/
 │   ├── PRD.md
 │   ├── BUSINESS_RULES.md
@@ -60,4 +75,6 @@ Urutan baca:
 Jangan mulai implementasi fitur sebelum memahami dokumen di atas.
 
 ## Catatan
-`REFERENSI UI/` adalah baseline UI/UX dan flow, bukan implementasi yang diteruskan. Prototype React tidak menjadi source of truth untuk database, security, persistence, authentication, authorization, reporting backend, atau perhitungan finansial final. Proposal KP dan requirement perusahaan menjadi acuan scope. Business logic final mengikuti `docs/BUSINESS_RULES.md` dan harus divalidasi di backend. Lihat `docs/REFERENCES.md` untuk hierarki acuan.
+Gunakan hierarchy berikut: Revisi/Kebutuhan Perusahaan Terbaru → Requirement Resmi → PRD / Business Rules / Technical Docs → Official Assets (`ASSETS/`) untuk brand, invoice, dan dokumen visual → Prototype Final (`REFERENSI UI/`) untuk UI/UX → Proposal KP untuk scope akademik.
+
+`REFERENSI UI/` adalah baseline UI/UX dan flow, bukan implementasi yang diteruskan. `ASSETS/` adalah source/reference original dan bukan folder public atau upload runtime. Prototype React tidak menjadi source of truth untuk database, security, persistence, authentication, authorization, reporting backend, atau perhitungan finansial final. Proposal KP dan requirement perusahaan menjadi acuan scope akademik. Business logic final mengikuti `docs/BUSINESS_RULES.md` dan harus divalidasi di backend. Lihat `docs/REFERENCES.md` untuk hierarki acuan.

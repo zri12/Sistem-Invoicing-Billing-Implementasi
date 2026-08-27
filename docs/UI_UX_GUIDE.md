@@ -130,3 +130,14 @@ Gunakan asset resmi:
 - cap dan tanda tangan dari data perusahaan.
 
 Jangan hard-code data perusahaan, rekening, terms, signer, cap, atau signature.
+
+### Official Invoice Asset Mapping
+Source asset original berada pada `/ASSETS/`; source tidak diedit atau digunakan langsung sebagai file runtime mutable.
+
+- Favicon — source: `ASSETS/favicon.ico`; runtime target yang saat ini digunakan: `public/favicon.svg`.
+- Logo Invoice — source: `ASSETS/logo untuk di invoice.png`; digunakan pada invoice preview/PDF.
+- Background Invoice — source: `ASSETS/bg-invoice.png`; digunakan pada template invoice PDF.
+- Font Invoice — source: `ASSETS/font invoice.zip`; digunakan sebagai referensi typography invoice. Font tidak diekstrak pada tahap ini.
+- Example Invoice PDF — source: `ASSETS/contoh invoice.pdf`; digunakan sebagai referensi visual layout.
+
+Lihat `docs/REFERENCES.md` untuk status dan aturan penggunaan asset resmi.
