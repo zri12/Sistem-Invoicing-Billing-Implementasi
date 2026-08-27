@@ -37,6 +37,9 @@ coverage/
 
 # Vite
 .vite/
+/public/build/
+/public/hot
+/public/storage
 
 # Vercel
 .vercel/
@@ -48,6 +51,11 @@ coverage/
 *.tmp
 *.temp
 .cache/
+
+# Laravel local tooling
+auth.json
+.fleet/
+.zed/
 
 # Local database files
 *.sqlite
