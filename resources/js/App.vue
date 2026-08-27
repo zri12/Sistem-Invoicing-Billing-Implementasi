@@ -1,5 +1,2 @@
-<template>
-    <main class="min-h-screen bg-slate-50 text-slate-900">
-        <router-view />
-    </main>
-</template>
+<script setup>import AppLayout from '@/layouts/AppLayout.vue'; import Toast from '@/components/ui/Toast.vue';</script>
+<template><AppLayout><router-view /></AppLayout><Toast /></template>
