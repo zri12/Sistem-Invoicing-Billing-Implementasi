@@ -27,7 +27,7 @@ const submit = () => {
     loading.value = true;
     window.setTimeout(() => {
         if (auth.loginDemo(username.value, password.value)) router.replace({ name: 'dashboard' });
-        else error.value = 'Username atau password salah. Silakan coba kembali.';
+        else error.value = auth.loginError || 'Username atau password salah. Silakan coba kembali.';
         loading.value = false;
     }, 600);
 };

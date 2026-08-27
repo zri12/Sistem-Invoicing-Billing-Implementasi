@@ -21,6 +21,7 @@ import Reports from '@/views/reports/Reports.vue';
 import Company from '@/views/settings/Company.vue';
 import Template from '@/views/settings/Template.vue';
 import Numbering from '@/views/settings/Numbering.vue';
+import Users from '@/views/settings/Users.vue';
 
 const placeholders = [['dashboard', 'Dashboard'], ['klien', 'Klien'], ['vendor', 'Vendor'], ['produk-layanan', 'Produk & Layanan'], ['rekening', 'Rekening'], ['invoice', 'Invoice'], ['billing', 'Billing'], ['pembayaran', 'Pembayaran'], ['pemasukan', 'Pemasukan'], ['pengeluaran', 'Pengeluaran'], ['laporan', 'Laporan'], ['data-perusahaan', 'Data Perusahaan'], ['template-invoice', 'Template Invoice'], ['penomoran-invoice', 'Penomoran Invoice'], ['pengguna', 'Pengguna & Hak Akses']];
 
@@ -50,16 +51,18 @@ const router = createRouter({
         { path: '/data-perusahaan', name: 'data-perusahaan', component: Company, meta: appMeta('Data Perusahaan') },
         { path: '/template-invoice', name: 'template-invoice', component: Template, meta: appMeta('Template Invoice') },
         { path: '/penomoran-invoice', name: 'penomoran-invoice', component: Numbering, meta: appMeta('Penomoran Invoice') },
-        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice', 'billing', 'pembayaran', 'pemasukan', 'pengeluaran', 'laporan', 'data-perusahaan', 'template-invoice', 'penomoran-invoice'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
+        { path: '/pengguna', name: 'pengguna', component: Users, meta: { ...appMeta('Pengguna & Hak Akses'), adminOnly: true } },
+        ...placeholders.filter(([path]) => !['dashboard', 'klien', 'vendor', 'produk-layanan', 'rekening', 'invoice', 'billing', 'pembayaran', 'pemasukan', 'pengeluaran', 'laporan', 'data-perusahaan', 'template-invoice', 'penomoran-invoice', 'pengguna'].includes(path)).map(([path, title]) => ({ path: `/${path}`, name: path, component: PlaceholderView, meta: appMeta(title) })),
     ],
 });
 
 // TEMPORARY FRONTEND DEMO GUARD — Vue routing is not production authorization.
+// FRONTEND DEMO GUARD ONLY. FINAL AUTHORIZATION MUST BE ENFORCED BY LARAVEL BACKEND.
 router.beforeEach((to) => {
     const auth = useAuthStore();
     if (to.meta.authRequired && !auth.isAuthenticated) return { name: 'login' };
     if (to.meta.guestOnly && auth.isAuthenticated) return { name: 'dashboard' };
-    if (to.meta.adminOnly && auth.role !== 'admin') return { name: 'invoice' };
+    if (to.meta.adminOnly && auth.role !== 'admin') return { name: to.name === 'pengguna' ? 'dashboard' : 'invoice' };
 });
 router.afterEach(() => { document.title = 'Sistem Invoicing & Billing | DEVSPACE'; });
 export default router;
