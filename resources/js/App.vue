@@ -1,0 +1,5 @@
+<template>
+    <main class="min-h-screen bg-slate-50 text-slate-900">
+        <router-view />
+    </main>
+</template>
