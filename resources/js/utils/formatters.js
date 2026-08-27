@@ -1,2 +1,7 @@
-export const formatCurrency = (value, currency = 'IDR') => new Intl.NumberFormat('id-ID', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value || 0);
-export const formatDate = (value) => value ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' }).format(new Date(value)) : '-';
+export const formatCurrency = (value) => `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
+export const formatDate = (value) => {
+    if (!value) return '-';
+    const date = new Date(`${value}T00:00:00`);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return `${String(date.getDate()).padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
+};
