@@ -3,8 +3,8 @@ defineProps({ label: String, collapsed: Boolean });
 </script>
 
 <template>
-  <section :class="collapsed ? 'mb-1.5' : 'mb-0.5'">
-    <div :class="collapsed ? 'px-1 pb-1 pt-3 text-center text-[8px] font-semibold leading-tight tracking-[0.04em] text-[#8B96A5]' : 'px-2 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-widest text-[#8B96A5]'">{{ label }}</div>
+  <section :class="collapsed ? 'mb-3 pt-2 first:pt-0' : 'mb-0.5'">
+    <div v-if="!collapsed" class="px-2 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-widest text-[#8B96A5]">{{ label }}</div>
     <slot />
   </section>
 </template>
