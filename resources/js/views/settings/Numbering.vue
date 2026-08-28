@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useInvoiceStore } from '@/stores/invoice';
 import { useSettingsStore } from '@/stores/settings';
 import { useUiStore } from '@/stores/ui';
+import { todayIso } from '@/utils/formatters';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseInput from '@/components/ui/BaseInput.vue';
@@ -16,13 +17,10 @@ const ui = useUiStore();
 const auth = useAuthStore();
 const form = reactive({ ...settings.invoiceNumbering });
 const readOnly = computed(() => auth.role === 'manager');
-const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const parseSequence = (number) => Number(/^\d+/.exec(number || '')?.[0]) || 0;
 const next = computed(() => {
-    const sequence = Math.max(...invoices.invoices.map((invoice) => Number(invoice.number.split('/')[0]) || 0)) + 1;
-    const date = new Date('2026-08-28T00:00:00');
-    const month = form.monthFormat === 'romawi' ? roman[date.getMonth()] : String(date.getMonth() + 1).padStart(2, '0');
-    const year = form.yearFormat === '2digit' ? String(date.getFullYear()).slice(-2) : String(date.getFullYear());
-    return `${String(sequence).padStart(Number(form.digits) || 3, '0')}/${form.documentCode}/${form.companyCode}/${month}/${year}`;
+    const sequence = Math.max(0, ...invoices.invoices.map((invoice) => parseSequence(invoice.number))) + 1;
+    return settings.formatNumber(sequence, todayIso());
 });
 const save = () => { settings.saveNumbering(form); ui.notify('Pengaturan penomoran berhasil disimpan.'); };
 </script>
