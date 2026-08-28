@@ -110,3 +110,11 @@ Status:
 - [ ] Report test.
 - [ ] PDF visual check.
 - [ ] UAT.
+
+## Corrective frontend finalization (demo state)
+
+- [x] Shared Master Data store untuk klien, vendor, produk, dan rekening.
+- [x] Pengeluaran memakai rekening sumber dan tujuan transfer bebas teks.
+- [x] Status invoice dipertahankan saat edit; pembayaran tervalidasi di frontend demo.
+- [x] Dashboard period menyaring metrik, grafik, status, dan invoice terbaru.
+- [ ] Persistensi dan validasi final tetap menunggu API Laravel.

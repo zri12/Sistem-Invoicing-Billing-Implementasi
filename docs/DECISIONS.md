@@ -102,3 +102,10 @@ Sidebar desktop mendukung expanded/collapsed. Saat collapsed, icon tetap ada, la
 Status: DECIDED
 
 Invoice PDF final menggunakan referensi visual dan asset resmi perusahaan. Prototype invoice React bukan satu-satunya referensi final; contoh PDF dan asset resmi perusahaan menjadi acuan visual output invoice.
+
+## D-016: Official Asset Repository
+Status: DECIDED
+
+Folder `ASSETS/` digunakan sebagai tempat penyimpanan source/reference original untuk branding, invoice, dan dokumen project. Original file tidak digunakan langsung sebagai mutable runtime file. Jika aplikasi membutuhkan asset tersebut, asset dapat disalin ke lokasi runtime tanpa menghapus original.
+
+Proposal yang terdapat di `ASSETS/` hanya digunakan sebagai referensi akademik, judul KP, scope umum, metode pengembangan, dan dokumentasi KP. Proposal tidak menjadi source of truth teknis jika bertentangan dengan requirement terbaru, dan PDF proposal tidak diubah pada task ini.

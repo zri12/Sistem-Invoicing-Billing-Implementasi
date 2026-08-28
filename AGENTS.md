@@ -41,6 +41,19 @@ Jangan:
 
 Prototype React hanya referensi. Implementasi final menggunakan Laravel + Vue.js + MySQL. Business logic final mengikuti `docs/BUSINESS_RULES.md`, database mengikuti `docs/DATABASE.md`, kontrak frontend-backend mengikuti `docs/API_CONTRACT.md`, dan UI mengikuti `docs/UI_UX_GUIDE.md`.
 
+## Official Assets
+Folder `ASSETS/` berisi asset dan dokumen referensi original/resmi untuk project. Developer dan AI agent harus memperlakukan file di folder tersebut sebagai source reference. Lihat `docs/REFERENCES.md` dan `docs/UI_UX_GUIDE.md` untuk pemetaan penggunaan asset.
+
+Jangan:
+- menghapus atau menimpa file original;
+- resize atau compress asset original secara langsung;
+- mengedit PDF atau font referensi;
+- memasukkan seluruh folder `ASSETS/` ke `public/`;
+- menggunakan Proposal KP sebagai pengganti business requirement; atau
+- membuat ulang logo apabila asset resmi tersedia.
+
+Jika asset diperlukan oleh runtime aplikasi, copy file yang relevan ke lokasi yang sesuai: favicon ke `public/`, asset frontend ke `resources/js/assets/` atau `public/`, template PDF ke Laravel, dan upload dinamis ke `storage/`. Original pada `ASSETS/` tetap dipertahankan.
+
 ## Tech Stack Final
 - Laravel sebagai framework/backend utama.
 - Vue.js 3 sebagai frontend.

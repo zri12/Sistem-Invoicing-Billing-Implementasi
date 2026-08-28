@@ -1,0 +1,6 @@
+<script setup>
+import { LoaderCircle } from 'lucide-vue-next'; import { computed, useAttrs } from 'vue'; defineOptions({ inheritAttrs: false });
+const props = defineProps({ variant: { type: String, default: 'primary' }, size: { type: String, default: 'md' }, loading: Boolean, disabled: Boolean, type: { type: String, default: 'button' } }); const attrs = useAttrs();
+const classes = computed(() => ['inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-[6px] border text-[13px] font-medium transition-colors', props.size === 'sm' ? 'h-8 px-3 text-xs' : props.size === 'lg' ? 'h-10 px-4' : 'h-9 px-4', ({ primary: 'border-[#173B6C] bg-[#173B6C] text-white hover:bg-[#102D54]', secondary: 'border-[#E2E6EC] bg-white text-[#172033] hover:bg-[#F9FAFB]', outline: 'border-[#173B6C] bg-white text-[#173B6C] hover:bg-[#EEF2F8]', danger: 'border-[#DC2626] bg-[#DC2626] text-white hover:bg-[#B91C1C]', ghost: 'border-transparent bg-transparent text-[#667085] hover:bg-[#F5F7FA] hover:text-[#172033]' })[props.variant] || '']);
+</script>
+<template><button v-bind="attrs" :type="type" :disabled="disabled || loading" :class="[classes, (disabled || loading) && 'opacity-60']"><LoaderCircle v-if="loading" :size="15" class="animate-spin" /><slot /></button></template>

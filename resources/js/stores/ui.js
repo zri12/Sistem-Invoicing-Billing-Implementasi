@@ -1,0 +1,4 @@
+import { defineStore } from 'pinia';
+const storageKey = 'devspace.sidebar.collapsed';
+const storedCollapsed = typeof window !== 'undefined' && window.localStorage.getItem(storageKey) === 'true';
+export const useUiStore = defineStore('ui', { state: () => ({ sidebarCollapsed: storedCollapsed, mobileSidebarOpen: false, toasts: [] }), actions: { toggleSidebar() { this.sidebarCollapsed = !this.sidebarCollapsed; window.localStorage.setItem(storageKey, String(this.sidebarCollapsed)); }, openMobileSidebar() { this.mobileSidebarOpen = true; }, closeMobileSidebar() { this.mobileSidebarOpen = false; }, notify(message, type = 'success', timeout = 4000) { const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`; this.toasts.push({ id, message, type, timeout }); return id; }, removeToast(id) { this.toasts = this.toasts.filter((toast) => toast.id !== id); } } });

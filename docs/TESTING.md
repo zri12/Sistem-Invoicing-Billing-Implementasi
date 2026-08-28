@@ -68,3 +68,10 @@
 - Terms dinamis.
 - Cap/TTD sesuai setting.
 - Signer sesuai data perusahaan.
+
+## Corrective frontend regression
+
+- Tambah/edit/nonaktifkan Master Data lalu verifikasi pilihan transaksi memakai data yang sama.
+- Pengeluaran wajib memiliki rekening sumber; rekening tujuan hanya wajib untuk transfer.
+- Edit invoice tidak boleh mengubah status yang sudah ada; pembayaran menolak invoice draft, lunas, dan nominal melebihi sisa.
+- Ubah periode Dashboard lalu verifikasi metrik, grafik, status, serta invoice terbaru ikut terfilter.
