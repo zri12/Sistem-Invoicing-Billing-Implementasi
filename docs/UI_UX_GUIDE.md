@@ -3,7 +3,7 @@
 ## Lokasi Referensi UI
 Referensi UI utama berada pada:
 
-`/REFERENSI UI/`
+Tag Git `frontend-full-reference-2026-08-28`.
 
 Status: **FINAL UI/UX BASELINE**.
 
@@ -26,7 +26,7 @@ Artinya:
 - layout, visual hierarchy, component style, serta navigation dipertahankan.
 
 ## Referensi Utama
-Prototype final pada `/REFERENSI UI/` adalah baseline UI/UX dan flow. Gunakan bersama `docs/REFERENCES.md`; jangan redesign tanpa revisi perusahaan.
+Prototype final yang diarsipkan pada tag `frontend-full-reference-2026-08-28` adalah baseline UI/UX dan flow historis. Gunakan bersama `docs/REFERENCES.md`; jangan redesign tanpa revisi perusahaan.
 
 ## Branding
 - Brand: DEVSPACE / PT. Ruang Kreasi Aplikasi.
@@ -132,12 +132,12 @@ Gunakan asset resmi:
 Jangan hard-code data perusahaan, rekening, terms, signer, cap, atau signature.
 
 ### Official Invoice Asset Mapping
-Source asset original berada pada `/ASSETS/`; source tidak diedit atau digunakan langsung sebagai file runtime mutable.
+Source asset original diarsipkan pada tag `frontend-full-reference-2026-08-28`; runtime asset tidak boleh diubah tanpa revisi perusahaan.
 
-- Favicon — source: `ASSETS/favicon.ico`; runtime target yang digunakan: `public/favicon.ico`.
-- Logo Invoice — source: `ASSETS/logo untuk di invoice.png`; digunakan pada invoice preview/PDF.
-- Background Invoice — source: `ASSETS/bg-invoice.png`; digunakan pada template invoice PDF.
-- Font Invoice — source: `ASSETS/font invoice.zip`; digunakan sebagai referensi typography invoice. Font tidak diekstrak pada tahap ini.
-- Example Invoice PDF — source: `ASSETS/contoh invoice.pdf`; digunakan sebagai referensi visual layout.
+- Favicon — runtime: `public/favicon.ico`.
+- Logo Invoice — runtime: `public/images/invoice/devspace-invoice-logo.png`.
+- Background Invoice — runtime: `public/images/invoice/bg-invoice.png`.
+- Font Invoice — runtime: `public/fonts/tamil-sangam-mn.otf`.
+- Example Invoice PDF — tersedia pada snapshot tag sebagai referensi visual layout historis.
 
 Lihat `docs/REFERENCES.md` untuk status dan aturan penggunaan asset resmi.

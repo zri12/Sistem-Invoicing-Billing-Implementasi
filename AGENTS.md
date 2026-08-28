@@ -14,13 +14,13 @@ Urutan acuan jika ada konflik:
 5. `docs/DATABASE.md`.
 6. `docs/API_CONTRACT.md`.
 7. `docs/UI_UX_GUIDE.md`.
-8. Folder `REFERENSI UI/` sebagai baseline UI/UX dan flow.
+8. Baseline UI/UX historis pada tag `frontend-full-reference-2026-08-28`.
 9. Proposal KP sebagai acuan akademik dan ruang lingkup umum.
 
 Jika ada konflik, jangan menebak. Periksa `docs/DECISIONS.md`; jika belum diputuskan, tandai sebagai `OPEN` dan minta keputusan bersama. Lihat juga `docs/REFERENCES.md` untuk penggunaan setiap acuan.
 
 ## Referensi UI
-Folder `REFERENSI UI/` berisi prototype final yang telah dibuat dan direvisi. Developer dan AI agent wajib mempelajari prototype yang relevan sebelum mengimplementasikan frontend.
+Prototype final yang digunakan selama implementasi frontend diarsipkan pada tag `frontend-full-reference-2026-08-28`. Buka tag tersebut bila konteks UI historis diperlukan.
 
 Prototype digunakan sebagai acuan:
 - layout, sidebar, dan topbar;
@@ -42,17 +42,17 @@ Jangan:
 Prototype React hanya referensi. Implementasi final menggunakan Laravel + Vue.js + MySQL. Business logic final mengikuti `docs/BUSINESS_RULES.md`, database mengikuti `docs/DATABASE.md`, kontrak frontend-backend mengikuti `docs/API_CONTRACT.md`, dan UI mengikuti `docs/UI_UX_GUIDE.md`.
 
 ## Official Assets
-Folder `ASSETS/` berisi asset dan dokumen referensi original/resmi untuk project. Developer dan AI agent harus memperlakukan file di folder tersebut sebagai source reference. Lihat `docs/REFERENCES.md` dan `docs/UI_UX_GUIDE.md` untuk pemetaan penggunaan asset.
+Asset dan dokumen referensi original yang digunakan selama frontend diarsipkan pada tag `frontend-full-reference-2026-08-28`. Runtime asset aplikasi berada di `public/`.
 
 Jangan:
 - menghapus atau menimpa file original;
 - resize atau compress asset original secara langsung;
 - mengedit PDF atau font referensi;
-- memasukkan seluruh folder `ASSETS/` ke `public/`;
+- memasukkan source asset historis ke runtime tanpa revisi yang disetujui;
 - menggunakan Proposal KP sebagai pengganti business requirement; atau
 - membuat ulang logo apabila asset resmi tersedia.
 
-Jika asset diperlukan oleh runtime aplikasi, copy file yang relevan ke lokasi yang sesuai: favicon ke `public/`, asset frontend ke `resources/js/assets/` atau `public/`, template PDF ke Laravel, dan upload dinamis ke `storage/`. Original pada `ASSETS/` tetap dipertahankan.
+Jika asset diperlukan oleh runtime aplikasi, gunakan lokasi runtime yang sesuai: favicon di `public/`, asset frontend di `resources/js/assets/` atau `public/`, template PDF di Laravel, dan upload dinamis di `storage/`.
 
 ## Tech Stack Final
 - Laravel sebagai framework/backend utama.
