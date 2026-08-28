@@ -15,9 +15,9 @@ export const useInvoiceStore = defineStore('invoice', {
     state: () => ({ invoices: records, previewInvoice: null }),
     actions: {
         getInvoiceById(id) { return this.invoices.find((invoice) => invoice.id === id); },
-        numberFor(date) { const max = Math.max(...this.invoices.map((invoice) => Number(invoice.number.split('/')[0]) || 0)); return useSettingsStore().formatNumber(max + 1, date); },
-        createInvoice(invoice) { const id = `inv-${Date.now()}`; this.invoices.unshift({ ...invoice, id }); return id; },
-        updateInvoice(id, invoice) { this.invoices = this.invoices.map((item) => item.id === id ? { ...item, ...invoice, number: item.number } : item); },
+        numberFor(date) { const max = Math.max(0, ...this.invoices.map((invoice) => Number(invoice.sequence ?? /^\d+/.exec(invoice.number || '')?.[0]) || 0)); return useSettingsStore().formatNumber(max + 1, date); },
+        createInvoice(invoice) { const id = `inv-${Date.now()}`; this.invoices.unshift({ ...invoice, id, sequence: Number(/^\d+/.exec(invoice.number || '')?.[0]) || null }); return id; },
+        updateInvoice(id, invoice) { this.invoices = this.invoices.map((item) => item.id === id ? { ...item, ...invoice, number: item.number, sequence: item.sequence ?? (Number(/^\d+/.exec(item.number || '')?.[0]) || null), status: item.status } : item); },
         cancelInvoice(id) { this.invoices = this.invoices.map((invoice) => invoice.id === id ? { ...invoice, status: 'cancelled' } : invoice); },
         setPreview(invoice) { this.previewInvoice = invoice; },
     },

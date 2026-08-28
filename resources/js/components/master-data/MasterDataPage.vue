@@ -4,6 +4,7 @@ import { MoreHorizontal, Plus, Search } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
 import { masterDataConfig } from '@/data/masterDataMock';
+import { useMasterDataStore } from '@/stores/masterData';
 import { formatCurrency } from '@/utils/formatters';
 import BaseBadge from '@/components/ui/BaseBadge.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -17,9 +18,9 @@ import Pagination from '@/components/ui/Pagination.vue';
 const props = defineProps({ kind: { type: String, required: true } });
 const auth = useAuthStore();
 const ui = useUiStore();
+const masterData = useMasterDataStore();
 const config = computed(() => masterDataConfig[props.kind]);
-const clone = (value) => JSON.parse(JSON.stringify(value));
-const data = ref(clone(config.value.records));
+const data = computed(() => masterData.recordsFor(props.kind));
 const search = ref('');
 const statusFilter = ref('semua');
 const page = ref(1);
@@ -63,12 +64,10 @@ const save = () => {
     const saved = { ...form.value };
     if (props.kind === 'product') saved.harga = Number(saved.harga || 0);
     if (editTarget.value) {
-        data.value = data.value.map((record) => record.id === editTarget.value.id ? { ...record, ...saved } : record);
+        masterData.update(props.kind, editTarget.value.id, saved);
         ui.notify(config.value.messages[1]);
     } else {
-        const record = { id: `${props.kind}-${Date.now()}`, ...saved };
-        if (props.kind === 'client' || props.kind === 'vendor') record.jumlah = 0;
-        data.value = config.value.append ? [...data.value, record] : [record, ...data.value];
+        masterData.add(props.kind, saved);
         ui.notify(config.value.messages[0]);
     }
     modalOpen.value = false;
@@ -76,7 +75,7 @@ const save = () => {
 const toggleStatus = () => {
     const target = confirmTarget.value;
     if (!target) return;
-    data.value = data.value.map((record) => record.id === target.id ? { ...record, status: record.status === 'aktif' ? 'nonaktif' : 'aktif' } : record);
+    masterData.toggle(props.kind, target.id);
     ui.notify(props.kind === 'product' || props.kind === 'account' ? config.value.messages[2] : `${config.value.messages[2]} ${target.status === 'aktif' ? 'dinonaktifkan' : 'diaktifkan'}.`);
     confirmTarget.value = null;
     menuOpen.value = null;

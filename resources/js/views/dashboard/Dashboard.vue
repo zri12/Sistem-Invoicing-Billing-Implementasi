@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { AlertCircle, ArrowRight, CheckCircle, Clock, FileText, MinusCircle, TrendingDown, TrendingUp } from 'lucide-vue-next';
 import BaseBadge from '@/components/ui/BaseBadge.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
-import { formatCurrency, formatDate } from '@/utils/formatters';
+import { currentMonthKey, formatCurrency, formatDate } from '@/utils/formatters';
 import { useInvoiceStore } from '@/stores/invoice';
 import { usePaymentStore } from '@/stores/payment';
 import { useFinanceStore } from '@/stores/finance';
@@ -15,14 +15,16 @@ const paymentStore = usePaymentStore();
 const financeStore = useFinanceStore();
 const period = ref('Bulan Ini');
 const activeChart = ref(null);
-const dashboardChart = computed(() => ['Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu'].map((label, index) => { const month=String(index+3).padStart(2,'0'); return { label, income: financeStore.allIncomes.filter((item)=>item.date.slice(5,7)===month).reduce((total,item)=>total+item.amount,0), expense: financeStore.expenses.filter((item)=>item.date.slice(5,7)===month).reduce((total,item)=>total+item.amount,0) }; }));
+const periodMonths = computed(() => { const current = new Date(`${currentMonthKey()}-01T00:00:00`); const count = period.value === 'Bulan Ini' ? 1 : period.value === '3 Bulan Terakhir' ? 3 : 12; return Array.from({ length: count }, (_, index) => { const date = new Date(current.getFullYear(), current.getMonth() - (count - index - 1), 1); return { key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`, label: date.toLocaleDateString('id-ID', { month: 'short' }) }; }); });
+const inPeriod = (date) => periodMonths.value.some((month) => date?.slice(0, 7) === month.key);
+const dashboardChart = computed(() => periodMonths.value.map((month) => ({ label: month.label, income: financeStore.allIncomes.filter((item)=>item.date.slice(0,7)===month.key).reduce((total,item)=>total+item.amount,0), expense: financeStore.expenses.filter((item)=>item.date.slice(0,7)===month.key).reduce((total,item)=>total+item.amount,0) })));
 const chartMax = computed(() => Math.max(10000000, ...dashboardChart.value.flatMap((item) => [item.income, item.expense])));
 const chartTicks = computed(() => [chartMax.value, chartMax.value * .75, chartMax.value * .5, chartMax.value * .25, 0]);
 const metrics = computed(() => ({
-    totalInvoice: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled').length,
-    outstanding: invoiceStore.invoices.filter((invoice) => invoice.status === 'published').reduce((total, invoice) => total + paymentStore.paymentSummaryByInvoice(invoice).remaining, 0),
-    income: financeStore.allIncomes.reduce((total, value) => total + value.amount, 0),
-    expense: financeStore.expenses.reduce((total, value) => total + value.amount, 0),
+    totalInvoice: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled' && inPeriod(invoice.date)).length,
+    outstanding: invoiceStore.invoices.filter((invoice) => invoice.status === 'published' && inPeriod(invoice.date)).reduce((total, invoice) => total + paymentStore.paymentSummaryByInvoice(invoice).remaining, 0),
+    income: financeStore.allIncomes.filter((value) => inPeriod(value.date)).reduce((total, value) => total + value.amount, 0),
+    expense: financeStore.expenses.filter((value) => inPeriod(value.date)).reduce((total, value) => total + value.amount, 0),
 }));
 const summaryCards = computed(() => [
     { label: 'Total Invoice', value: String(metrics.value.totalInvoice), sub: 'invoice aktif', icon: FileText, accent: '#173B6C', route: 'invoice' },
@@ -35,8 +37,8 @@ const statusRows = computed(() => [
     { key: 'dibayar_sebagian', label: 'Dibayar Sebagian', color: '#D97706', icon: Clock },
     { key: 'lunas', label: 'Lunas', color: '#16A34A', icon: CheckCircle },
     { key: 'jatuh_tempo', label: 'Jatuh Tempo', color: '#DC2626', icon: AlertCircle },
-].map((item) => ({ ...item, count: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled' && paymentStore.paymentSummaryByInvoice(invoice).status === item.key).length })));
-const recentInvoices = computed(() => invoiceStore.invoices.map((invoice) => ({ ...invoice, issuedAt: invoice.date, dueAt: invoice.dueDate, total: paymentStore.paymentSummaryByInvoice(invoice).total, paymentStatus: paymentStore.paymentSummaryByInvoice(invoice).status })).sort((left, right) => right.issuedAt.localeCompare(left.issuedAt)).slice(0, 5));
+].map((item) => ({ ...item, count: invoiceStore.invoices.filter((invoice) => invoice.status !== 'cancelled' && inPeriod(invoice.date) && paymentStore.paymentSummaryByInvoice(invoice).status === item.key).length })));
+const recentInvoices = computed(() => invoiceStore.invoices.filter((invoice) => inPeriod(invoice.date)).map((invoice) => ({ ...invoice, issuedAt: invoice.date, dueAt: invoice.dueDate, total: paymentStore.paymentSummaryByInvoice(invoice).total, paymentStatus: paymentStore.paymentSummaryByInvoice(invoice).status })).sort((left, right) => right.issuedAt.localeCompare(left.issuedAt)).slice(0, 5));
 const paymentBadge = (status) => ({ belum_dibayar: ['Belum Dibayar', 'neutral'], dibayar_sebagian: ['Dibayar Sebagian', 'warning'], lunas: ['Lunas', 'success'], jatuh_tempo: ['Jatuh Tempo', 'danger'] }[status]);
 const chartHeight = (value) => Math.round((value / chartMax.value) * 134);
 const chartY = (value) => 142 - chartHeight(value);

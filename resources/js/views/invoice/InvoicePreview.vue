@@ -4,21 +4,24 @@ import { ArrowLeft, Download, Printer } from 'lucide-vue-next';
 import { useRoute, useRouter } from 'vue-router';
 import { useInvoiceStore } from '@/stores/invoice';
 import { useSettingsStore } from '@/stores/settings';
-import { masterDataConfig } from '@/data/masterDataMock';
-import { formatCurrency, formatDate } from '@/utils/formatters';
+import { useMasterDataStore } from '@/stores/masterData';
+import { formatInvoiceCurrency, formatInvoiceDate } from '@/utils/formatters';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
 const route = useRoute();
 const router = useRouter();
 const store = useInvoiceStore();
 const settings = useSettingsStore();
+const masterData = useMasterDataStore();
 const invoice = computed(() => store.previewInvoice?.id === route.params.id ? store.previewInvoice : store.getInvoiceById(route.params.id));
-const account = computed(() => masterDataConfig.account.records.find((record) => record.id === invoice.value?.accountId));
-const client = computed(() => masterDataConfig.client.records.find((record) => record.id === invoice.value?.clientId));
+const account = computed(() => masterData.getAccountById(invoice.value?.accountId));
+const client = computed(() => { const record = masterData.getClientById(invoice.value?.clientId); return record ? { ...record, phone: record.telepon } : null; });
 const subtotal = computed(() => invoice.value?.items.reduce((sum, item) => sum + item.price * item.qty, 0) || 0);
 const total = computed(() => subtotal.value - (invoice.value?.discount || 0));
 const company = computed(() => settings.company);
 const template = computed(() => settings.invoiceTemplate);
+const formatCurrency = formatInvoiceCurrency;
+const formatDate = formatInvoiceDate;
 </script>
 
 <template>

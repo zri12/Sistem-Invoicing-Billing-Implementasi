@@ -5,7 +5,7 @@ const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'
 
 export const useSettingsStore = defineStore('settings', {
     state: () => ({
-        company: { name: 'PT. Ruang Kreasi Aplikasi', code: 'RKA', address: 'Jl. Melong No.123, Cimahi, Jawa Barat 40534', phone: '(022) 12345678', email: 'info@ruangkreasi.co.id', website: 'www.ruangkreasi.co.id', tagline: 'Professional & Valuable Digital Transformation', signerName: 'Andri Firmansyah', signerPosition: 'Admin Keuangan', logoUrl: '/images/invoice/devspace-invoice-logo.png', stampUrl: '', signatureUrl: '' },
+        company: { name: 'PT. Ruang Kreasi Aplikasi', code: 'RKA', address: 'Jl. Melong No.123, Cimahi, Jawa Barat 40534', signingCity: 'Bandung', phone: '(022) 12345678', email: 'info@ruangkreasi.co.id', website: 'www.ruangkreasi.co.id', tagline: 'Professional & Valuable Digital Transformation', signerName: 'Andri Firmansyah', signerPosition: 'Admin Keuangan', logoUrl: '/images/invoice/devspace-invoice-logo.png', stampUrl: '', signatureUrl: '' },
         invoiceTemplate: { title: 'INVOICE', showLogo: true, showTagline: true, showTitle: true, showNumber: true, showInvoiceDate: true, showDueDate: true, showClient: true, showItems: true, showSubtotal: true, showDiscount: true, showTotal: true, showBankInfo: true, showTerms: true, showStamp: true, showSignature: true, showSignerName: true, showSignerPosition: true },
         invoiceNumbering: { documentCode: 'INV', companyCode: 'RKA', digits: 3, monthFormat: 'romawi', yearFormat: '2digit', resetPolicy: 'belum' },
     }),
