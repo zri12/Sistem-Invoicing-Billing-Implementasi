@@ -32,7 +32,11 @@ const save = () => { settings.saveTemplate(form); ui.notify('Template berhasil d
 <style scoped>
 .invoice-template-preview {
   position: relative;
-  min-height: 700px;
+  width: 210mm;
+  max-width: 100%;
+  min-height: 297mm;
+  padding: 16mm 20mm !important;
+  font-size: 12px;
   overflow: hidden;
   background-image: url('/images/invoice/bg-invoice.png');
   background-position: center;
@@ -51,4 +55,6 @@ const save = () => { settings.saveTemplate(form); ui.notify('Template berhasil d
 .invoice-template-preview::before { top: 0; right: 0; }
 .invoice-template-preview::after { bottom: 0; left: 0; transform: rotate(180deg); }
 .invoice-template-preview > * { position: relative; z-index: 1; }
+.invoice-template-preview table { margin-top: 12mm; }
+.invoice-template-preview > div:nth-last-child(1) { margin-top: auto; }
 </style>
