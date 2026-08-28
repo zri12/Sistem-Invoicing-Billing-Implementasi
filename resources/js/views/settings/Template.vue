@@ -28,3 +28,27 @@ const save = () => { settings.saveTemplate(form); ui.notify('Template berhasil d
     </div>
   </div>
 </template>
+
+<style scoped>
+.invoice-template-preview {
+  position: relative;
+  min-height: 700px;
+  overflow: hidden;
+  background-image: url('/images/invoice/bg-invoice.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.invoice-template-preview::before,
+.invoice-template-preview::after {
+  position: absolute;
+  z-index: 0;
+  width: 12px;
+  height: 200px;
+  content: '';
+  background: linear-gradient(to bottom, #626ca8 0 37%, #d9e1f3 37% 69%, #ebeff8 69% 100%);
+}
+.invoice-template-preview::before { top: 0; right: 0; }
+.invoice-template-preview::after { bottom: 0; left: 0; transform: rotate(180deg); }
+.invoice-template-preview > * { position: relative; z-index: 1; }
+</style>
