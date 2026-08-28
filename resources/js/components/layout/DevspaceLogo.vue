@@ -1,2 +1,8 @@
-<script setup>defineProps({ size: { type: Number, default: 26 } });</script>
-<template><svg :width="size" :height="size" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="DEVSPACE"><g transform="rotate(45 50 50)"><rect x="52" y="10" width="36" height="36" rx="8" fill="#EF4444"/><rect x="12" y="54" width="36" height="36" rx="8" fill="#2C3E7A"/><rect x="12" y="10" width="36" height="36" rx="8" fill="#2C3E7A"/><rect x="52" y="54" width="36" height="36" rx="8" fill="#EF4444"/><rect x="38" y="38" width="24" height="24" rx="4" fill="white"/></g></svg></template>
+<script setup>
+const brandIconUrl = '/favicon.ico';
+defineProps({ size: { type: Number, default: 26 } });
+</script>
+
+<template>
+  <img :src="brandIconUrl" :width="size" :height="size" alt="DEVSPACE" class="shrink-0 object-contain" />
+</template>
