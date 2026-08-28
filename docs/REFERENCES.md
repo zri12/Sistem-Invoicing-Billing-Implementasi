@@ -73,7 +73,7 @@ Status: **OFFICIAL SOURCE / REFERENCE ASSETS**.
 
 ### Branding
 - DEVSPACE favicon: `ASSETS/favicon.ico`.
-- Runtime copy yang telah digunakan aplikasi: `public/favicon.svg`.
+- Runtime copy yang digunakan aplikasi: `public/favicon.ico`.
 
 ### Invoice
 - DEVSPACE invoice logo: `ASSETS/logo untuk di invoice.png`.
