@@ -4,7 +4,7 @@ import { Download, Printer, Search } from 'lucide-vue-next';
 import { useInvoiceStore } from '@/stores/invoice';
 import { usePaymentStore } from '@/stores/payment';
 import { useFinanceStore } from '@/stores/finance';
-import { masterDataConfig } from '@/data/masterDataMock';
+import { useMasterDataStore } from '@/stores/masterData';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
@@ -12,13 +12,13 @@ import BaseInput from '@/components/ui/BaseInput.vue';
 import BaseSelect from '@/components/ui/BaseSelect.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 
-const invoices = useInvoiceStore(); const payments = usePaymentStore(); const finance = useFinanceStore();
+const invoices = useInvoiceStore(); const payments = usePaymentStore(); const finance = useFinanceStore(); const masterData = useMasterDataStore();
 const tab = ref('debit-kredit'); const start = ref('2026-07-01'); const end = ref('2026-08-31'); const account = ref('semua'); const search = ref(''); const page = ref(1); const pageSize = 8;
-const accounts = masterDataConfig.account.records.filter((item) => item.status === 'aktif');
+const accounts = computed(() => masterData.accounts);
 const tabs = [['debit-kredit', 'Keuangan / Debit & Kredit'], ['invoice', 'Invoice'], ['pembayaran', 'Pembayaran'], ['pemasukan', 'Pemasukan'], ['pengeluaran', 'Pengeluaran']];
 const validRange = computed(() => !start.value || !end.value || start.value <= end.value);
 const matches = (entry) => entry.date >= start.value && entry.date <= end.value && (account.value === 'semua' || entry.accountId === account.value) && entry.description.toLowerCase().includes(search.value.toLowerCase());
-const cashbook = computed(() => finance.cashbookEntries.map((entry) => ({ ...entry, accountId: entry.type === 'credit' ? finance.expenses.find((expense) => expense.id === entry.id)?.destinationAccountId || '' : finance.allIncomes.find((income) => income.id === entry.id)?.accountId || '' })).filter(matches).sort((left, right) => left.date.localeCompare(right.date)));
+const cashbook = computed(() => finance.cashbookEntries.filter(matches).sort((left, right) => left.date.localeCompare(right.date)));
 const debit = computed(() => cashbook.value.filter((entry) => entry.type === 'debit').reduce((total, entry) => total + entry.amount, 0));
 const credit = computed(() => cashbook.value.filter((entry) => entry.type === 'credit').reduce((total, entry) => total + entry.amount, 0));
 const balance = computed(() => debit.value - credit.value);
@@ -31,7 +31,7 @@ const entityRows = computed(() => {
             ? payments.payments.map((payment) => ({ id: payment.id, date: payment.paymentDate, description: payment.referenceNumber || 'Pembayaran Invoice', amount: payment.amount, accountId: payment.accountId, type: 'pembayaran' }))
             : tab.value === 'pemasukan'
                 ? finance.allIncomes.map((income) => ({ id: income.id, date: income.date, description: income.description, amount: income.amount, accountId: income.accountId, type: 'pemasukan' }))
-                : finance.expenses.map((expense) => ({ id: expense.id, date: expense.date, description: expense.description, amount: expense.amount, accountId: expense.destinationAccountId || '', type: 'pengeluaran' }));
+                : finance.expenses.map((expense) => ({ id: expense.id, date: expense.date, description: expense.description, amount: expense.amount, accountId: expense.sourceAccountId || '', type: 'pengeluaran' }));
     return entries.filter(matches);
 });
 const simpleRows = computed(() => entityRows.value.slice((page.value - 1) * pageSize, page.value * pageSize));
