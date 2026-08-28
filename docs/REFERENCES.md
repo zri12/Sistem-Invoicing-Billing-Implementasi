@@ -1,114 +1,36 @@
 # REFERENCES.md
 
-## 1. Tujuan
-File ini mencatat sumber referensi resmi selama development agar developer dan AI agent menggunakan acuan yang sama.
+## Tujuan
 
-## 2. Prototype UI/UX
-Lokasi:
+Dokumen ini mencatat acuan resmi yang dipakai selama development agar developer dan AI agent menggunakan sumber yang sama.
 
-`/REFERENSI UI/`
+## Baseline UI/UX Historis
 
-Status: **FINAL UI/UX BASELINE**.
+Prototype UI/UX final yang digunakan pada fase frontend diarsipkan pada Git tag `frontend-full-reference-2026-08-28`. Tag tersebut menjadi recovery point untuk layout, halaman, component, flow, dan responsive behavior historis. Prototype tidak menjadi source untuk backend architecture, database, authentication, authorization, atau business logic final.
 
-Digunakan untuk:
-- layout;
-- halaman;
-- component;
-- navigation;
-- form;
-- modal;
-- table;
-- responsive behavior;
-- interaction;
-- role-based view; dan
-- flow UI.
+## Requirement dan Dokumen Teknis
 
-Tidak digunakan untuk:
-- backend architecture;
-- database;
-- authentication production;
-- authorization;
-- business logic final; atau
-- persistence.
+Requirement resmi perusahaan adalah primary functional source. Backend dan implementasi lanjutan mengikuti `PRD.md`, `BUSINESS_RULES.md`, `DATABASE.md`, `API_CONTRACT.md`, `ARCHITECTURE.md`, `UI_UX_GUIDE.md`, `TESTING.md`, dan `DECISIONS.md`.
 
-## 3. Requirement Sistem
-Status: **PRIMARY FUNCTIONAL SOURCE**.
+## Asset Runtime
 
-Requirement resmi perusahaan digunakan untuk functional requirements, non-functional requirements, role, scope, data, business flow, dan acceptance criteria. Jika dokumen requirement belum berada di repository, requirement resmi perusahaan tetap menjadi acuan utama; lokasi file diisi saat dokumen dimasukkan.
+Source asset original dan contoh invoice diarsipkan pada tag `frontend-full-reference-2026-08-28`. Asset runtime yang dipakai oleh aplikasi saat ini adalah:
 
-## 4. Proposal Kerja Praktik
-Judul:
+- Favicon: `public/favicon.ico`
+- Logo invoice: `public/images/invoice/devspace-invoice-logo.png`
+- Background invoice: `public/images/invoice/bg-invoice.png`
+- Font invoice: `public/fonts/tamil-sangam-mn.otf`
 
-> Rancang Bangun Sistem Invoicing dan Billing Berbasis Web pada PT. Ruang Kreasi Aplikasi
+Asset runtime tidak boleh diubah tanpa revisi perusahaan.
 
-Digunakan untuk:
-- ruang lingkup akademik;
-- metodologi Agile/Scrum;
-- teknologi;
-- tahapan KP; dan
-- dokumentasi akademik.
+## Prioritas Referensi
 
-Proposal bukan pengganti requirement teknis.
-
-## 5. Referensi Invoice
-Asset resmi yang digunakan:
-- Logo DEVSPACE;
-- Background invoice;
-- Favicon/icon;
-- Font invoice;
-- Contoh Invoice PDF;
-- Cap perusahaan; dan
-- Tanda tangan.
-
-Invoice final harus mengikuti referensi visual perusahaan.
-
-## 6. Official Project Assets
-Lokasi:
-
-`/ASSETS/`
-
-Status: **OFFICIAL SOURCE / REFERENCE ASSETS**.
-
-`ASSETS/` menyimpan source original. File di dalamnya tidak selalu dipakai langsung oleh browser atau aplikasi; file yang diperlukan dapat disalin ke lokasi runtime yang sesuai tanpa mengubah original.
-
-### Branding
-- DEVSPACE favicon: `ASSETS/favicon.ico`.
-- Runtime copy yang digunakan aplikasi: `public/favicon.ico`.
-
-### Invoice
-- DEVSPACE invoice logo: `ASSETS/logo untuk di invoice.png`.
-- Background invoice: `ASSETS/bg-invoice.png`.
-- Example invoice PDF: `ASSETS/contoh invoice.pdf`.
-- Invoice font archive: `ASSETS/font invoice.zip`.
-
-Contoh invoice dan asset invoice menjadi referensi visual output PDF final. Data invoice tetap dinamis dari database; jangan hard-code klien, nomor invoice, nominal, rekening, penanda tangan, atau tanggal dari PDF contoh.
-
-### Documents
-- Proposal Kerja Praktik: `ASSETS/PROPOSAL_KP_Fazri Lukman Nurrohman_Fahmi Nashruddin.pdf`.
-
-Proposal digunakan untuk referensi akademik, judul KP, scope umum, metode pengembangan, dan dokumentasi KP; proposal bukan pengganti requirement teknis terbaru.
-
-## 7. Prioritas Referensi
-```text
-Revisi Perusahaan Terbaru
-            ↓
-Requirement Resmi
-            ↓
-PRD / Business Rules / Technical Docs
-            ↓
-Official Assets (ASSETS/) untuk visual, brand, dan document reference
-            ↓
-Prototype Final
-            ↓
-Proposal KP
-```
-
-Detail urutan dokumen teknis tersedia pada `../AGENTS.md` dan keputusan yang telah dikunci dicatat pada `DECISIONS.md`.
-
-## 8. Aturan Penggunaan Referensi
-Jika ada perbedaan:
-- jangan memilih sendiri;
-- jangan membuat asumsi;
-- cek `DECISIONS.md`;
-- jika belum diputuskan, tandai `OPEN`; dan
-- jangan mengubah implementation berdasarkan asumsi AI.
+1. Kebutuhan/revisi resmi perusahaan.
+2. Dokumen requirement resmi sistem.
+3. `docs/PRD.md`.
+4. `docs/BUSINESS_RULES.md`.
+5. `docs/DATABASE.md`.
+6. `docs/API_CONTRACT.md`.
+7. `docs/UI_UX_GUIDE.md`.
+8. Snapshot historis `frontend-full-reference-2026-08-28` untuk baseline UI/UX.
+9. Proposal KP untuk scope akademik dan dokumentasi umum.

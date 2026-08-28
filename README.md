@@ -1,80 +1,131 @@
+<div align="center">
+  <img src="public/images/invoice/devspace-invoice-logo.png" alt="DEVSPACE" width="300" />
+
 # Sistem Invoicing & Billing
 
 **PT. Ruang Kreasi Aplikasi**
 
-Project Kerja Praktik:
-**Rancang Bangun Sistem Invoicing dan Billing Berbasis Web pada PT. Ruang Kreasi Aplikasi**
+Sistem internal berbasis web untuk pengelolaan invoice, billing, pembayaran, pemasukan, pengeluaran, dan laporan keuangan sederhana.
 
-## Stack
-- Laravel
-- Vue.js 3
-- MySQL
-- Vite
-- Tailwind CSS
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)
+![Laravel 12](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
+![Vue 3](https://img.shields.io/badge/Vue.js-3-4FC08D?logo=vuedotjs&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Planned-4479A1?logo=mysql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20%2B-5FA04E?logo=nodedotjs&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
+</div>
 
-## Developer
-- Fazri — Frontend & Project Foundation
-- Fahmi — Backend & Database
+## Project Status
 
-## Struktur Awal Repository
+| Area | Status |
+| --- | --- |
+| Frontend UI/UX | ✅ Complete |
+| Frontend business-flow demo | ✅ Complete |
+| Backend Laravel | ⏳ Planned |
+| Database integration | ⏳ Planned |
+| End-to-end production QA | ⏳ Planned |
 
-Struktur utama juga mencakup `ASSETS/` sebagai asset branding, invoice, dan dokumen referensi original/resmi. Folder ini berbeda dari `REFERENSI UI/`: asset visual dan dokumen resmi berasal dari `ASSETS/`, sedangkan layout serta flow UI aplikasi berasal dari `REFERENSI UI/`.
+## Tentang Project
 
-```text
-Sistem-Invoicing-Billing/
-├── app/
-├── bootstrap/
-├── config/
-├── database/
-├── public/
-├── resources/
-├── routes/
-├── storage/
-├── tests/
-│
-├── ASSETS/
-│   └── Asset branding, invoice, dan dokumen referensi original/resmi
-│
-├── docs/
-│   ├── PRD.md
-│   ├── BUSINESS_RULES.md
-│   ├── ARCHITECTURE.md
-│   ├── DATABASE.md
-│   ├── API_CONTRACT.md
-│   ├── UI_UX_GUIDE.md
-│   ├── REFERENCES.md
-│   ├── SPRINT_PLAN.md
-│   ├── BACKLOG.md
-│   ├── TESTING.md
-│   └── DECISIONS.md
-│
-├── REFERENSI UI/
-│   └── Prototype final Sistem Invoicing & Billing
-│
-├── AGENTS.md
-└── README.md
+Project Kerja Praktik: **Rancang Bangun Sistem Invoicing dan Billing Berbasis Web pada PT. Ruang Kreasi Aplikasi**. Aplikasi ini menyatukan proses pembuatan invoice, monitoring billing, pencatatan pembayaran, pemasukan, pengeluaran, serta laporan sederhana dalam satu sistem internal.
+
+## Fitur Utama
+
+- **Dashboard** — ringkasan invoice, tagihan, pemasukan, pengeluaran, dan grafik periode.
+- **Master Data** — klien, vendor, produk & layanan, serta rekening.
+- **Invoice** — draft, terbitkan, batalkan, item invoice, penomoran, preview A4, dan template invoice.
+- **Billing & Payment** — sisa tagihan, pembayaran parsial/multiple, status pembayaran, dan validasi overpayment.
+- **Keuangan** — pemasukan dari pembayaran, pemasukan manual, pengeluaran, rekening sumber, dan transfer.
+- **Laporan** — buku kas debit/kredit, invoice, pembayaran, pemasukan, dan pengeluaran.
+- **Pengaturan** — data perusahaan, template invoice, penomoran invoice, serta pengguna & hak akses.
+
+## Alur Bisnis
+
+```mermaid
+flowchart LR
+    A[Invoice] -->|Terbitkan| B[Billing]
+    B --> C[Payment]
+    C --> D[Pemasukan]
+    D --> E[Laporan]
+    F[Pengeluaran] --> E
 ```
 
-## Sebelum Mulai Coding
+Invoice diterbitkan tidak otomatis menjadi pemasukan. Pemasukan invoice dicatat saat pembayaran diterima.
 
-Urutan baca:
-1. `AGENTS.md`
-2. `docs/PRD.md`
-3. `docs/BUSINESS_RULES.md`
-4. `docs/ARCHITECTURE.md`
-5. `docs/DATABASE.md`
-6. `docs/API_CONTRACT.md`
-7. `docs/UI_UX_GUIDE.md`
-8. `docs/REFERENCES.md`
-9. `REFERENSI UI/`
-10. `docs/SPRINT_PLAN.md`
-11. `docs/BACKLOG.md`
-12. `docs/TESTING.md`
-13. `docs/DECISIONS.md`
+## Business Rules Utama
 
-Jangan mulai implementasi fitur sebelum memahami dokumen di atas.
+- Billing = total invoice − total pembayaran.
+- Satu invoice dapat memiliki beberapa pembayaran.
+- Overpayment ditolak; invoice draft tidak masuk billing aktif.
+- Pengeluaran terpisah dari billing dan memakai rekening sumber.
+- Laporan memakai konsep debit/kredit sederhana.
 
-## Catatan
-Gunakan hierarchy berikut: Revisi/Kebutuhan Perusahaan Terbaru → Requirement Resmi → PRD / Business Rules / Technical Docs → Official Assets (`ASSETS/`) untuk brand, invoice, dan dokumen visual → Prototype Final (`REFERENSI UI/`) untuk UI/UX → Proposal KP untuk scope akademik.
+## Teknologi
 
-`REFERENSI UI/` adalah baseline UI/UX dan flow, bukan implementasi yang diteruskan. `ASSETS/` adalah source/reference original dan bukan folder public atau upload runtime. Prototype React tidak menjadi source of truth untuk database, security, persistence, authentication, authorization, reporting backend, atau perhitungan finansial final. Proposal KP dan requirement perusahaan menjadi acuan scope akademik. Business logic final mengikuti `docs/BUSINESS_RULES.md` dan harus divalidasi di backend. Lihat `docs/REFERENCES.md` untuk hierarki acuan.
+- Laravel 12
+- Vue.js 3, Vue Router, dan Pinia
+- MySQL (fase integrasi berikutnya)
+- Vite dan Tailwind CSS
+
+## Arsitektur
+
+```mermaid
+flowchart LR
+    V[Vue 3 + Pinia] --> L[Laravel API - planned phase]
+    L --> M[MySQL - planned phase]
+```
+
+Frontend saat ini memakai data demo terstruktur. API Laravel dan integrasi MySQL adalah fase pengembangan berikutnya.
+
+## Struktur Project
+
+```text
+.
+├── app/                 # Laravel application
+├── config/              # Framework configuration
+├── database/            # Future database schema and seeders
+├── docs/                # Product and technical contracts
+├── public/              # Runtime favicon, fonts, and invoice images
+├── resources/           # Vue frontend and Blade views
+├── routes/              # Laravel routes
+├── storage/
+├── tests/
+├── artisan
+├── composer.json
+├── package.json
+└── vite.config.js
+```
+
+## Development Setup
+
+```bash
+composer install
+npm install
+copy .env.example .env
+php artisan key:generate
+# Konfigurasikan database pada .env sebelum menjalankan migration.
+npm run dev
+php artisan serve
+```
+
+## Catatan Pengembangan
+
+Dokumen kebutuhan, aturan bisnis, kontrak API, dan keputusan teknis berada di [`docs/`](docs/). Referensi UI dan asset sumber original yang digunakan selama implementasi frontend diarsipkan pada tag [`frontend-full-reference-2026-08-28`](https://github.com/zri12/Sistem-Invoicing-Billing-Implementasi/tree/frontend-full-reference-2026-08-28).
+
+Current development: frontend implementation complete; backend dan integrasi database merupakan fase berikutnya.
+
+## Developer
+
+| Nama | Tanggung Jawab |
+| --- | --- |
+| Fazri Lukman Nurrohman | Frontend & Project Foundation |
+| Fahmi Nashruddin | Backend & Database |
+
+## Environment
+
+File `.env` tidak disimpan di repository. Gunakan `.env.example` sebagai baseline konfigurasi lokal.
+
+<div align="center">
+  Developed for PT. Ruang Kreasi Aplikasi
+</div>

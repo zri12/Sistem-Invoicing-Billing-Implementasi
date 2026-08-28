@@ -59,7 +59,7 @@ Requirement/proposal laporan menggunakan konsep saldo awal + debit - kredit. Pro
 Status: DECIDED
 
 Keputusan:
-Prototype pada folder `REFERENSI UI/` menjadi baseline UI/UX implementasi sistem final.
+Prototype yang diarsipkan pada tag `frontend-full-reference-2026-08-28` menjadi baseline UI/UX implementasi sistem final.
 
 Prototype digunakan untuk:
 - visual;
@@ -106,6 +106,6 @@ Invoice PDF final menggunakan referensi visual dan asset resmi perusahaan. Proto
 ## D-016: Official Asset Repository
 Status: DECIDED
 
-Folder `ASSETS/` digunakan sebagai tempat penyimpanan source/reference original untuk branding, invoice, dan dokumen project. Original file tidak digunakan langsung sebagai mutable runtime file. Jika aplikasi membutuhkan asset tersebut, asset dapat disalin ke lokasi runtime tanpa menghapus original.
+Source/reference original untuk branding, invoice, dan dokumen project diarsipkan pada tag `frontend-full-reference-2026-08-28`. Runtime asset digunakan dari lokasi `public/` dan tidak diubah tanpa revisi perusahaan.
 
-Proposal yang terdapat di `ASSETS/` hanya digunakan sebagai referensi akademik, judul KP, scope umum, metode pengembangan, dan dokumentasi KP. Proposal tidak menjadi source of truth teknis jika bertentangan dengan requirement terbaru, dan PDF proposal tidak diubah pada task ini.
+Proposal pada snapshot tag hanya digunakan sebagai referensi akademik, judul KP, scope umum, metode pengembangan, dan dokumentasi KP. Proposal tidak menjadi source of truth teknis jika bertentangan dengan requirement terbaru.
