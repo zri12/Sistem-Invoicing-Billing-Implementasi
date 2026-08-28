@@ -20,6 +20,8 @@ export const usePaymentStore = defineStore('payment', {
         addPayment(payment, invoice) {
             if (!invoice || invoice.status !== 'published') throw new Error('Pembayaran hanya dapat dicatat untuk invoice diterbitkan.');
             const summary = this.paymentSummaryByInvoice(invoice);
+            if (!payment.paymentDate || !payment.method?.trim() || !payment.accountId) throw new Error('Tanggal pembayaran, metode, dan rekening penerima wajib diisi.');
+            if (summary.remaining <= 0) throw new Error('Invoice ini sudah lunas.');
             const amount = Number(payment.amount || 0);
             if (amount <= 0) throw new Error('Nominal pembayaran harus lebih dari Rp 0.');
             if (amount > summary.remaining) throw new Error('Nominal pembayaran melebihi sisa tagihan.');

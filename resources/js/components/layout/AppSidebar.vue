@@ -25,7 +25,7 @@ const managerGroups = [
     { label: 'Laporan', items: [{ label: 'Laporan', to: '/laporan', icon: BarChart3 }] },
 ];
 const groups = computed(() => auth.role === 'manager' ? managerGroups : adminGroups);
-const active = (item) => route.path === item.to || (item.to === '/invoice' && route.path.startsWith('/invoice'));
+const active = (item) => route.path === item.to || (['/invoice', '/billing'].includes(item.to) && route.path.startsWith(item.to));
 const closeMobile = () => ui.closeMobileSidebar();
 const logout = () => { auth.logoutDemo(); closeMobile(); router.replace({ name: 'login' }); };
 </script>
