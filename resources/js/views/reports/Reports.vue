@@ -1,11 +1,11 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Download, Printer, Search } from 'lucide-vue-next';
 import { useInvoiceStore } from '@/stores/invoice';
 import { usePaymentStore } from '@/stores/payment';
 import { useFinanceStore } from '@/stores/finance';
 import { useMasterDataStore } from '@/stores/masterData';
-import { formatCurrency, formatDate } from '@/utils/formatters';
+import { formatCurrency, formatDate, todayIso } from '@/utils/formatters';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseInput from '@/components/ui/BaseInput.vue';
@@ -13,7 +13,8 @@ import BaseSelect from '@/components/ui/BaseSelect.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 
 const invoices = useInvoiceStore(); const payments = usePaymentStore(); const finance = useFinanceStore(); const masterData = useMasterDataStore();
-const tab = ref('debit-kredit'); const start = ref('2026-07-01'); const end = ref('2026-08-31'); const account = ref('semua'); const search = ref(''); const page = ref(1); const pageSize = 8;
+const tab = ref('debit-kredit'); const start = ref(`${todayIso().slice(0, 7)}-01`); const end = ref(todayIso()); const account = ref('semua'); const search = ref(''); const page = ref(1); const pageSize = 8;
+onMounted(() => { invoices.ensure(); payments.ensure(); finance.ensure(); masterData.ensureAll(); });
 const accounts = computed(() => masterData.accounts);
 const tabs = [['debit-kredit', 'Keuangan / Debit & Kredit'], ['invoice', 'Invoice'], ['pembayaran', 'Pembayaran'], ['pemasukan', 'Pemasukan'], ['pengeluaran', 'Pengeluaran']];
 const validRange = computed(() => !start.value || !end.value || start.value <= end.value);

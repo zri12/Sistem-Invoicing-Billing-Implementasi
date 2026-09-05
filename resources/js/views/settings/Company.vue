@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { Save, Upload } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useSettingsStore } from '@/stores/settings';
@@ -13,15 +13,26 @@ const settings = useSettingsStore();
 const auth = useAuthStore();
 const ui = useUiStore();
 const form = reactive({ ...settings.company });
+const files = reactive({ logo: null, stamp: null, signature: null });
 const readOnly = computed(() => auth.role === 'manager');
+onMounted(async () => { await settings.ensure(); Object.assign(form, settings.company); });
+const fieldToFileKey = { logoUrl: 'logo', stampUrl: 'stamp', signatureUrl: 'signature' };
 const choose = (key, event) => {
     const file = event.target.files?.[0];
     if (file?.type.startsWith('image/')) {
         if (form[key]?.startsWith('blob:')) URL.revokeObjectURL(form[key]);
         form[key] = URL.createObjectURL(file);
+        files[fieldToFileKey[key]] = file;
     }
 };
-const save = () => { settings.saveCompany(form); ui.notify('Data perusahaan berhasil disimpan.'); };
+const save = async () => {
+    try {
+        await settings.saveCompany(form, files);
+        ui.notify('Data perusahaan berhasil disimpan.');
+    } catch (error) {
+        ui.notify(error.response?.data?.message || 'Gagal menyimpan data perusahaan.', 'error');
+    }
+};
 </script>
 
 <template>

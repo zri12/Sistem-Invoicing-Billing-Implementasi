@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { Save } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useInvoiceStore } from '@/stores/invoice';
@@ -17,12 +17,20 @@ const ui = useUiStore();
 const auth = useAuthStore();
 const form = reactive({ ...settings.invoiceNumbering });
 const readOnly = computed(() => auth.role === 'manager');
+onMounted(async () => { await Promise.all([settings.ensure(), invoices.ensure()]); Object.assign(form, settings.invoiceNumbering); });
 const parseSequence = (number) => Number(/^\d+/.exec(number || '')?.[0]) || 0;
 const next = computed(() => {
     const sequence = Math.max(0, ...invoices.invoices.map((invoice) => parseSequence(invoice.number))) + 1;
     return settings.formatNumber(sequence, todayIso());
 });
-const save = () => { settings.saveNumbering(form); ui.notify('Pengaturan penomoran berhasil disimpan.'); };
+const save = async () => {
+    try {
+        await settings.saveNumbering(form);
+        ui.notify('Pengaturan penomoran berhasil disimpan.');
+    } catch (error) {
+        ui.notify(error.response?.data?.message || 'Gagal menyimpan pengaturan penomoran.', 'error');
+    }
+};
 </script>
 
 <template>

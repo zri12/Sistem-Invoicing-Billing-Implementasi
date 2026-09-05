@@ -27,7 +27,7 @@ const managerGroups = [
 const groups = computed(() => auth.role === 'manager' ? managerGroups : adminGroups);
 const active = (item) => route.path === item.to || (['/invoice', '/billing'].includes(item.to) && route.path.startsWith(item.to));
 const closeMobile = () => ui.closeMobileSidebar();
-const logout = () => { auth.logoutDemo(); closeMobile(); router.replace({ name: 'login' }); };
+const logout = async () => { await auth.logout(); closeMobile(); router.replace({ name: 'login' }); };
 </script>
 
 <template>

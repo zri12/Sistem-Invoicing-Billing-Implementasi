@@ -59,8 +59,14 @@ const router = createRouter({
 
 // TEMPORARY FRONTEND DEMO GUARD — Vue routing is not production authorization.
 // FRONTEND DEMO GUARD ONLY. FINAL AUTHORIZATION MUST BE ENFORCED BY LARAVEL BACKEND.
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
     const auth = useAuthStore();
+    // Vue Router resolves its first navigation as soon as the router is
+    // installed, before app.js's async session check can finish — so on a
+    // hard refresh this guard would otherwise see a not-yet-hydrated store
+    // and bounce straight to /login. Block that first navigation on the
+    // session check instead of racing it.
+    if (!auth.initialized) await auth.fetchCurrentUser();
     if (to.meta.authRequired && !auth.isAuthenticated) return { name: 'login' };
     if (to.meta.guestOnly && auth.isAuthenticated) return { name: 'dashboard' };
     if (to.meta.adminOnly && auth.role !== 'admin') return { name: to.name === 'pengguna' ? 'dashboard' : 'invoice' };

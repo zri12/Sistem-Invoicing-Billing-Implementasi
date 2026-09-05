@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia';
-import { masterDataSeed } from '@/data/masterDataMock';
+import masterDataService from '@/services/masterDataService';
 
-const clone = (value) => JSON.parse(JSON.stringify(value));
 const pluralFor = { client: 'clients', vendor: 'vendors', product: 'products', account: 'accounts' };
 
 export const useMasterDataStore = defineStore('masterData', {
     state: () => ({
-        clients: clone(masterDataSeed.clients),
-        vendors: clone(masterDataSeed.vendors),
-        products: clone(masterDataSeed.products),
-        accounts: clone(masterDataSeed.accounts),
+        clients: [],
+        vendors: [],
+        products: [],
+        accounts: [],
+        loaded: { clients: false, vendors: false, products: false, accounts: false },
     }),
     getters: {
         recordsFor: (state) => (kind) => state[pluralFor[kind]] || [],
@@ -20,32 +20,47 @@ export const useMasterDataStore = defineStore('masterData', {
         getAccountById: (state) => (id) => state.accounts.find((record) => record.id === id),
     },
     actions: {
-        add(kind, value) {
+        async fetch(kind) {
             const collection = pluralFor[kind];
-            const record = { ...value, id: `${kind}-${Date.now()}` };
-            if (kind === 'client' || kind === 'vendor') record.jumlah = 0;
+            this[collection] = await masterDataService.list(kind);
+            this.loaded[collection] = true;
+        },
+        async ensure(kind) {
+            const collection = pluralFor[kind];
+            if (!this.loaded[collection]) await this.fetch(kind);
+        },
+        async ensureAll() {
+            await Promise.all(['client', 'vendor', 'product', 'account'].map((kind) => this.ensure(kind)));
+        },
+        async add(kind, value) {
+            const collection = pluralFor[kind];
+            const record = await masterDataService.create(kind, value);
             this[collection] = kind === 'account' ? [...this[collection], record] : [record, ...this[collection]];
             return record;
         },
-        update(kind, id, value) {
+        async update(kind, id, value) {
             const collection = pluralFor[kind];
-            this[collection] = this[collection].map((record) => record.id === id ? { ...record, ...value, id } : record);
+            const record = await masterDataService.update(kind, id, value);
+            this[collection] = this[collection].map((item) => item.id === id ? record : item);
+            return record;
         },
-        toggle(kind, id) {
+        async toggle(kind, id) {
             const collection = pluralFor[kind];
-            this[collection] = this[collection].map((record) => record.id === id ? { ...record, status: record.status === 'aktif' ? 'nonaktif' : 'aktif' } : record);
+            const record = await masterDataService.toggleStatus(kind, id);
+            this[collection] = this[collection].map((item) => item.id === id ? record : item);
+            return record;
         },
         addClient(value) { return this.add('client', value); },
-        updateClient(id, value) { this.update('client', id, value); },
-        toggleClientStatus(id) { this.toggle('client', id); },
+        updateClient(id, value) { return this.update('client', id, value); },
+        toggleClientStatus(id) { return this.toggle('client', id); },
         addVendor(value) { return this.add('vendor', value); },
-        updateVendor(id, value) { this.update('vendor', id, value); },
-        toggleVendorStatus(id) { this.toggle('vendor', id); },
+        updateVendor(id, value) { return this.update('vendor', id, value); },
+        toggleVendorStatus(id) { return this.toggle('vendor', id); },
         addProduct(value) { return this.add('product', value); },
-        updateProduct(id, value) { this.update('product', id, value); },
-        toggleProductStatus(id) { this.toggle('product', id); },
+        updateProduct(id, value) { return this.update('product', id, value); },
+        toggleProductStatus(id) { return this.toggle('product', id); },
         addAccount(value) { return this.add('account', value); },
-        updateAccount(id, value) { this.update('account', id, value); },
-        toggleAccountStatus(id) { this.toggle('account', id); },
+        updateAccount(id, value) { return this.update('account', id, value); },
+        toggleAccountStatus(id) { return this.toggle('account', id); },
     },
 });

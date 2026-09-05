@@ -19,17 +19,15 @@ const passwordError = ref('');
 const shapes = Array.from({ length: 8 }, (_, index) => ({ width: `${80 + index * 60}px`, height: `${80 + index * 60}px`, transform: `translate(-50%, -50%) rotate(${index * 15}deg)` }));
 
 const useDemo = (demoUsername, demoPassword) => { username.value = demoUsername; password.value = demoPassword; error.value = ''; };
-const submit = () => {
+const submit = async () => {
     error.value = '';
     usernameError.value = username.value.trim() ? '' : 'Username wajib diisi.';
     passwordError.value = password.value ? '' : 'Password wajib diisi.';
     if (usernameError.value || passwordError.value || loading.value) return;
     loading.value = true;
-    window.setTimeout(() => {
-        if (auth.loginDemo(username.value, password.value)) router.replace({ name: 'dashboard' });
-        else error.value = auth.loginError || 'Username atau password salah. Silakan coba kembali.';
-        loading.value = false;
-    }, 600);
+    if (await auth.login(username.value, password.value)) router.replace({ name: 'dashboard' });
+    else error.value = auth.loginError || 'Username atau password salah. Silakan coba kembali.';
+    loading.value = false;
 };
 </script>
 

@@ -1,30 +1,40 @@
 import { defineStore } from 'pinia';
-import { useUsersStore } from '@/stores/users';
-
-// TEMPORARY FRONTEND DEMO AUTH — to be replaced by Laravel Auth/API.
-const storageKey = 'devspace.demo.user';
-const readStoredUser = () => {
-    if (typeof window === 'undefined') return null;
-    try { return JSON.parse(window.sessionStorage.getItem(storageKey) || 'null'); } catch { return null; }
-};
+import authService from '@/services/authService';
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({ user: readStoredUser(), loginError: '' }),
-    getters: { role: (state) => state.user?.role || null, isAuthenticated: (state) => Boolean(state.user) },
+    state: () => ({ user: null, loginError: '', initialized: false }),
+    getters: {
+        role: (state) => state.user?.role || null,
+        isAuthenticated: (state) => Boolean(state.user),
+    },
     actions: {
-        loginDemo(username, password) {
-            const account = useUsersStore().findByUsername(username);
+        async login(username, password) {
             this.loginError = '';
-            if (!account || account.password !== password) { this.loginError = 'Username atau password salah. Silakan coba kembali.'; return false; }
-            if (account.status !== 'aktif') { this.loginError = 'Akun tidak aktif.'; return false; }
-            this.user = { id: account.id, username: account.username, name: account.name, role: account.role };
-            window.sessionStorage.setItem(storageKey, JSON.stringify(this.user));
-            return true;
+            try {
+                this.user = await authService.login(username, password);
+                return true;
+            } catch (error) {
+                this.loginError = error.response?.data?.errors?.username?.[0]
+                    || error.response?.data?.message
+                    || 'Username atau password salah. Silakan coba kembali.';
+                return false;
+            }
         },
-        logoutDemo() {
-            this.user = null;
-            this.loginError = '';
-            window.sessionStorage.removeItem(storageKey);
+        async logout() {
+            try {
+                await authService.logout();
+            } finally {
+                this.user = null;
+            }
+        },
+        async fetchCurrentUser() {
+            try {
+                this.user = await authService.me();
+            } catch {
+                this.user = null;
+            } finally {
+                this.initialized = true;
+            }
         },
     },
 });

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -13,6 +14,36 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'aktif';
+    }
+
+    public function invoicesCreated(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'created_by');
+    }
+
+    public function paymentsCreated(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'created_by');
+    }
+
+    public function incomesCreated(): HasMany
+    {
+        return $this->hasMany(Income::class, 'created_by');
+    }
+
+    public function expensesCreated(): HasMany
+    {
+        return $this->hasMany(Expense::class, 'created_by');
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -20,8 +51,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'role',
+        'status',
     ];
 
     /**
