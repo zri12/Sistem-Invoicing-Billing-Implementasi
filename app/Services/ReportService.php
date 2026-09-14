@@ -9,15 +9,7 @@ use App\Models\Payment;
 
 class ReportService
 {
-    /**
-     * Debit = Income, Kredit = Expense (source_account_id, never the free-text
-     * destination_account). Simple cashbook scope only - not double-entry
-     * accounting. Opening balance is intentionally excluded from the ending
-     * balance: it remains a REVIEW decision (D-009) with no locked behavior,
-     * so the formula stays exactly what BUSINESS_RULES.md / the current
-     * frontend already compute (debit - credit), and can gain an
-     * opening_balance term later without breaking this contract.
-     */
+    /** Menghasilkan buku kas sederhana: debit dikurangi kredit. */
     public function cashbook(array $filters): array
     {
         $incomes = Income::query()

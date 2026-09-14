@@ -29,6 +29,9 @@ class AuthTest extends TestCase
                 'success' => true,
                 'data' => ['id' => $user->id, 'username' => 'fazrilukman', 'role' => 'admin'],
             ])
+            ->assertJsonPath('data.bootstrap.invoices', [])
+            ->assertJsonPath('data.bootstrap.payments', [])
+            ->assertJsonPath('data.bootstrap.clients', [])
             ->assertJsonMissingPath('data.password');
     }
 

@@ -12,8 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('invoice_id')->constrained('invoices')->cascadeOnDelete();
             $table->foreignId('product_service_id')->nullable()->constrained('products_services')->nullOnDelete();
-            // Historical snapshot of the product/service name at time of invoicing,
-            // independent from the current products_services.name (locked decision).
+            // Nama produk saat invoice diterbitkan.
             $table->string('product_name')->nullable();
             $table->text('description');
             $table->decimal('qty', 10, 2);

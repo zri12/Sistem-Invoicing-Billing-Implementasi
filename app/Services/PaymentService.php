@@ -11,8 +11,8 @@ use Illuminate\Validation\ValidationException;
 class PaymentService
 {
     /**
-     * Atomic Payment -> Income flow (BUSINESS_RULES.md section 5, CLAUDE.md
-     * 11.7). Locks the invoice row for the duration of the transaction so
+     * Atomic Payment -> Income flow. Locks the invoice row for the duration
+     * of the transaction so
      * concurrent payment requests against the same invoice serialize instead
      * of both reading a stale "remaining" value - the classic double-payment
      * race (two requests each paying 800.000 against a 1.000.000 remaining

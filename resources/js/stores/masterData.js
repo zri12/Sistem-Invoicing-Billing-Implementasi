@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import masterDataService from '@/services/masterDataService';
 
 const pluralFor = { client: 'clients', vendor: 'vendors', product: 'products', account: 'accounts' };
+const masterDataRequests = {};
 
 export const useMasterDataStore = defineStore('masterData', {
     state: () => ({
@@ -25,12 +26,16 @@ export const useMasterDataStore = defineStore('masterData', {
             this[collection] = await masterDataService.list(kind);
             this.loaded[collection] = true;
         },
-        async ensure(kind) {
+        async ensure(kind, force = false) {
             const collection = pluralFor[kind];
-            if (!this.loaded[collection]) await this.fetch(kind);
+            if (!force && this.loaded[collection]) return;
+            if (!masterDataRequests[collection]) {
+                masterDataRequests[collection] = this.fetch(kind).finally(() => { masterDataRequests[collection] = null; });
+            }
+            await masterDataRequests[collection];
         },
-        async ensureAll() {
-            await Promise.all(['client', 'vendor', 'product', 'account'].map((kind) => this.ensure(kind)));
+        async ensureAll(force = false) {
+            await Promise.all(['client', 'vendor', 'product', 'account'].map((kind) => this.ensure(kind, force)));
         },
         async add(kind, value) {
             const collection = pluralFor[kind];

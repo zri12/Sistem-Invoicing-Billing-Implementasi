@@ -2,12 +2,8 @@ import { defineStore } from 'pinia';
 import paymentService from '@/services/paymentService';
 import { todayIso } from '@/utils/formatters';
 
-// Prefer the backend-authoritative invoice.total; fall back to computing
-// from items only for objects that never went through the API (e.g. the
-// static template preview invoice in Template.vue).
-const invoiceTotal = (invoice) => invoice?.total != null
-    ? Number(invoice.total)
-    : (invoice?.items || []).reduce((total, item) => total + Number(item.price || 0) * Number(item.qty || 0), 0) - Number(invoice?.discount || 0);
+const invoiceTotal = (invoice) => Number(invoice?.total || 0);
+let paymentListRequest = null;
 
 export const usePaymentStore = defineStore('payment', {
     state: () => ({ payments: [], loaded: false }),
@@ -19,10 +15,13 @@ export const usePaymentStore = defineStore('payment', {
     },
     actions: {
         async ensure() {
-            if (!this.loaded) {
-                this.payments = await paymentService.list();
-                this.loaded = true;
+            if (this.loaded) return;
+            if (!paymentListRequest) {
+                paymentListRequest = paymentService.list()
+                    .then((payments) => { this.payments = payments; this.loaded = true; })
+                    .finally(() => { paymentListRequest = null; });
             }
+            await paymentListRequest;
         },
         async addPayment(payment, invoice) {
             if (!invoice || invoice.status !== 'published') throw new Error('Pembayaran hanya dapat dicatat untuk invoice diterbitkan.');

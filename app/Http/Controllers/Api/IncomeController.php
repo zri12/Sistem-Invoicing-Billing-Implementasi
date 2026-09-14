@@ -44,7 +44,7 @@ class IncomeController extends Controller
     {
         // source_type/payment_id/invoice_id are never accepted from the
         // client - this endpoint can only ever create manual, non-invoice
-        // income (BACKEND_IMPLEMENTATION_PLAN.md B6.1/B6.3).
+        // income record.
         $income = Income::create([
             ...$request->validated(),
             'source_type' => 'manual',

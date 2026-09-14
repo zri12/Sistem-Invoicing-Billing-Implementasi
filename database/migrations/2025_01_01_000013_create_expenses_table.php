@@ -17,9 +17,6 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->foreignId('source_account_id')->constrained('accounts')->restrictOnDelete();
             $table->enum('transaction_type', ['cash', 'qris', 'credit', 'transfer']);
-            // Free-text external destination (bank/account name), not an internal
-            // accounts.id relation. Required only when transaction_type = transfer
-            // (enforced in the Form Request / Service, not at the DB layer).
             $table->string('destination_account')->nullable();
             $table->string('reference_number')->nullable();
             $table->string('proof_path')->nullable();

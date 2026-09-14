@@ -1,12 +1,17 @@
 import api from '@/services/api';
 
-const fromApi = (p) => ({
+const methodFromApi = { transfer: 'Transfer Bank', cash: 'Kas', cheque: 'Cek', qris: 'QRIS' };
+
+export const paymentFromApi = (p) => ({
     id: p.id,
     invoiceId: p.invoice_id,
     paymentDate: p.payment_date,
     amount: Number(p.amount),
-    method: p.method,
+    method: methodFromApi[p.method] || p.method,
     accountId: p.account_id,
+    accountName: p.account?.name || '',
+    invoiceNumber: p.invoice?.invoice_number || '',
+    clientName: p.invoice?.client?.name || '',
     referenceNumber: p.reference_number || '',
     proofName: p.proof_url ? p.proof_url.split('/').pop() : '',
     notes: p.notes || '',
@@ -14,14 +19,12 @@ const fromApi = (p) => ({
     createdAt: p.created_at,
 });
 
-// Frontend displays Indonesian labels; backend method enum is locked to
-// cash/transfer/cheque/qris (docs/backend gap resolved this session).
 const methodToApi = { 'Transfer Bank': 'transfer', Kas: 'cash', Cek: 'cheque', QRIS: 'qris' };
 
 export default {
     async list() {
         const { data } = await api.get('/payments', { params: { per_page: 200 } });
-        return data.data.items.map(fromApi);
+        return data.data.items.map(paymentFromApi);
     },
     async record(invoiceId, payment) {
         const form = new FormData();
@@ -34,6 +37,6 @@ export default {
         if (payment.proofFile) form.append('proof', payment.proofFile);
 
         const { data } = await api.post(`/invoices/${invoiceId}/payments`, form);
-        return fromApi(data.data);
+        return paymentFromApi(data.data);
     },
 };

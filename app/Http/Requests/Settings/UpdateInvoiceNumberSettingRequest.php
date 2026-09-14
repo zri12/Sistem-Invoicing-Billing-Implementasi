@@ -20,9 +20,6 @@ class UpdateInvoiceNumberSettingRequest extends FormRequest
             'digits' => ['required', 'integer', 'min:1', 'max:10'],
             'month_format' => ['required', 'in:romawi,angka'],
             'year_format' => ['required', 'in:2digit,4digit'],
-            // Only "continuous" is functionally implemented (D-007 resolved
-            // this session). Rejecting other values here rather than
-            // silently accepting a setting the service does not honor.
             'reset_rule' => ['sometimes', 'in:continuous'],
         ];
     }

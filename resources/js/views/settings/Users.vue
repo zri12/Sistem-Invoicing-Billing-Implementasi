@@ -82,7 +82,7 @@ const changeStatus = async () => {
         confirmTarget.value = null;
     }
 };
-const statusMessage = computed(() => confirmTarget.value?.status === 'aktif' ? 'Pengguna tidak dapat login sampai akun diaktifkan kembali.' : 'Pengguna dapat login kembali dengan akun demo yang aktif.');
+const statusMessage = computed(() => confirmTarget.value?.status === 'aktif' ? 'Pengguna tidak dapat login sampai akun diaktifkan kembali.' : 'Pengguna dapat login kembali setelah akun diaktifkan.');
 </script>
 
 <template>

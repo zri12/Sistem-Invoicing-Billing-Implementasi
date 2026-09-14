@@ -89,7 +89,7 @@ class InvoiceService
             ]);
         }
 
-        // Publish does NOT create Income (BUSINESS_RULES.md section 6 / CLAUDE.md 11.6).
+        // Publishing does not create an Income record.
         $invoice->update(['document_status' => 'published']);
 
         return $invoice;
@@ -103,11 +103,9 @@ class InvoiceService
             ]);
         }
 
-        // "Cancel invoice after payment" is an explicit open gap in
-        // BUSINESS_RULES.md / DECISIONS.md - no refund/reversal behavior is
-        // documented. Failing closed here (reject the cancel) rather than
-        // inventing reversal logic, per CLAUDE.md's "don't silently resolve
-        // OPEN decisions" rule. Revisit once the company decides.
+        // A paid invoice cannot be cancelled because refund/reversal behavior
+        // is not implemented. Reject the action instead of inventing a ledger
+        // reversal silently.
         if ($invoice->payments()->exists()) {
             throw ValidationException::withMessages([
                 'document_status' => ['Invoice dengan pembayaran tercatat tidak dapat dibatalkan otomatis. Diperlukan keputusan bisnis.'],

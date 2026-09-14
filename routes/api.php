@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ProductServiceController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VendorController;
+use App\Http\Middleware\ReleaseReadOnlySession;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,13 +23,13 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Business endpoints will be added in accordance with docs/API_CONTRACT.md.
+| Business endpoints are registered below.
 |
 */
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', ReleaseReadOnlySession::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
@@ -76,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/company', [CompanyController::class, 'show']);
     Route::put('/company', [CompanyController::class, 'update']);
 
+    Route::get('/settings/invoice-template/preview', [InvoiceTemplateSettingController::class, 'preview']);
     Route::get('/settings/invoice-template', [InvoiceTemplateSettingController::class, 'show']);
     Route::put('/settings/invoice-template', [InvoiceTemplateSettingController::class, 'update']);
 

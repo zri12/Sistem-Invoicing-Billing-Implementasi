@@ -9,8 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Rejects requests from an authenticated user whose account has been set to
- * "nonaktif" since login. Technical choice (AUTHORIZATION_MATRIX.md section 9
- * leaves this undocumented): deactivation takes effect on the user's very next
+ * "nonaktif" since login. Deactivation takes effect on the user's very next
  * request rather than requiring a separate session-invalidation broadcast.
  */
 class EnsureUserIsActive

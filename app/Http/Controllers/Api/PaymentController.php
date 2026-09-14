@@ -24,7 +24,7 @@ class PaymentController extends Controller
         $this->authorize('viewAny', Payment::class);
 
         $payments = Payment::query()
-            ->with(['account', 'invoice'])
+            ->with(['account', 'invoice.client'])
             ->when($request->filled('invoice_id'), fn ($q) => $q->where('invoice_id', $request->integer('invoice_id')))
             ->when($request->filled('account_id'), fn ($q) => $q->where('account_id', $request->integer('account_id')))
             ->when($request->filled('method'), fn ($q) => $q->where('method', $request->string('method')))

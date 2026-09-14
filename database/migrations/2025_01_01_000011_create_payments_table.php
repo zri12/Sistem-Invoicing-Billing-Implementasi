@@ -13,8 +13,6 @@ return new class extends Migration
             $table->foreignId('invoice_id')->constrained('invoices')->cascadeOnDelete();
             $table->date('payment_date');
             $table->decimal('amount', 15, 2);
-            // Canonical lowercase enum (locked decision). Frontend Indonesian labels
-            // ("Transfer Bank", "Kas", "Cek", "QRIS") map to these via the API layer.
             $table->enum('method', ['cash', 'transfer', 'cheque', 'qris'])->default('transfer');
             $table->foreignId('account_id')->constrained('accounts')->restrictOnDelete();
             $table->string('reference_number')->nullable();

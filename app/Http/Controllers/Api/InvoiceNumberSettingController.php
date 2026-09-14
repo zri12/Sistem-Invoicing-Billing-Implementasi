@@ -21,10 +21,6 @@ class InvoiceNumberSettingController extends Controller
 
     public function update(UpdateInvoiceNumberSettingRequest $request)
     {
-        // Changing these settings never touches invoice_number values already
-        // persisted on existing invoices - only future InvoiceNumberService
-        // calls read this row (B8.3 "existing invoice immutable" requirement
-        // is satisfied by construction, not by extra code here).
         $settings = $this->row();
         $settings->update($request->validated());
 

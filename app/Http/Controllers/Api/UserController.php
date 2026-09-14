@@ -52,7 +52,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        // Safety rail (AUTHORIZATION_MATRIX.md section 9): an Admin cannot
+        // Safety rail: an Admin cannot
         // downgrade their own role, mirroring the existing frontend guard
         // (Users.vue) that this backend must not regress below.
         if ($request->user()->id === $user->id && $request->validated('role') !== 'admin') {

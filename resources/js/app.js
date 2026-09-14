@@ -10,4 +10,6 @@ app.use(router);
 
 // Session restoration (if any) happens inside the router's beforeEach guard,
 // which blocks the first navigation on fetchCurrentUser() — see router/index.js.
-app.mount('#app');
+// Wait for the initial route and session restoration before rendering.
+// This prevents the dashboard layout from flashing on /login after refresh.
+router.isReady().then(() => app.mount('#app'));

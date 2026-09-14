@@ -1,11 +1,15 @@
 import api from '@/services/api';
 
-const fromApi = (inv) => ({
+export const invoiceFromApi = (inv) => ({
     id: inv.id,
     number: inv.invoice_number,
     name: inv.invoice_name,
     clientId: inv.client_id,
     client: inv.client?.name || '',
+    clientDetails: inv.client ? {
+        id: inv.client.id, nama: inv.client.name, alamat: inv.client.address,
+        telepon: inv.client.phone, email: inv.client.email,
+    } : null,
     date: inv.invoice_date,
     dueDate: inv.due_date,
     items: (inv.items || []).map((item) => ({
@@ -20,6 +24,11 @@ const fromApi = (inv) => ({
     discount: Number(inv.discount || 0),
     total: Number(inv.total || 0),
     accountId: inv.payment_account_id,
+    accountDetails: inv.payment_account ? {
+        id: inv.payment_account.id, nama: inv.payment_account.name,
+        nomor: inv.payment_account.account_number, atasNama: inv.payment_account.account_holder,
+        cabang: inv.payment_account.branch,
+    } : null,
     terms: inv.payment_terms || '',
     notes: inv.invoice_notes || '',
     status: inv.document_status,
@@ -46,27 +55,27 @@ const toApi = (form, status) => ({
 export default {
     async list() {
         const { data } = await api.get('/invoices', { params: { per_page: 200 } });
-        return data.data.items.map(fromApi);
+        return data.data.items.map(invoiceFromApi);
     },
     async get(id) {
         const { data } = await api.get(`/invoices/${id}`);
-        return fromApi(data.data);
+        return invoiceFromApi(data.data);
     },
     async create(form, status) {
         const { data } = await api.post('/invoices', toApi(form, status));
-        return fromApi(data.data);
+        return invoiceFromApi(data.data);
     },
     async update(id, form) {
         const { data } = await api.put(`/invoices/${id}`, toApi(form));
-        return fromApi(data.data);
+        return invoiceFromApi(data.data);
     },
     async cancel(id) {
         const { data } = await api.post(`/invoices/${id}/cancel`);
-        return fromApi(data.data);
+        return invoiceFromApi(data.data);
     },
     async publish(id) {
         const { data } = await api.post(`/invoices/${id}/publish`);
-        return fromApi(data.data);
+        return invoiceFromApi(data.data);
     },
     async downloadPdf(id, fallbackFilename) {
         const response = await api.get(`/invoices/${id}/pdf`, { responseType: 'blob' });

@@ -28,7 +28,7 @@ class BillingService
 
     /**
      * Priority: paid > overdue > partial > unpaid. due_date == today is NOT
-     * overdue (BUSINESS_RULES.md section 4 / CLAUDE.md 11.4).
+     * overdue according to the invoice due date.
      */
     private function status(Invoice $invoice, float $total, float $totalPaid, float $remaining): string
     {

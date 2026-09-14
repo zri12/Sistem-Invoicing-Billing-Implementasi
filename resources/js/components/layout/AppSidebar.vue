@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { BarChart3, Building, Building2, ChevronDown, ChevronsLeft, FileEdit, FileText, Hash, LayoutDashboard, LogOut, Package, Receipt, TrendingDown, TrendingUp, UserCog, Users, Wallet, CreditCard, X } from 'lucide-vue-next';
+import { BarChart3, Building, Building2, ChevronDown, ChevronsLeft, ChevronsRight, FileEdit, FileText, Hash, LayoutDashboard, LogOut, Package, Receipt, TrendingDown, TrendingUp, UserCog, Users, Wallet, CreditCard, X } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
 import DevspaceLogo from './DevspaceLogo.vue';
@@ -35,7 +35,7 @@ const logout = async () => { await auth.logout(); closeMobile(); router.replace(
   <aside :class="['fixed inset-y-0 left-0 z-40 flex h-full flex-col border-r border-[#E2E6EC] bg-white transition-[width,transform] duration-200 lg:static lg:z-auto lg:translate-x-0 lg:shrink-0', isCollapsed ? 'w-[76px]' : 'w-[236px]', ui.mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full']">
     <div :class="['flex h-[52px] shrink-0 items-center border-b border-[#E2E6EC]', isCollapsed ? 'justify-center px-2' : 'gap-2.5 px-5']">
       <DevspaceLogo v-if="!isCollapsed" :size="26" />
-      <button v-else class="hidden rounded p-1 lg:inline-flex" title="Perluas sidebar" aria-label="Perluas sidebar" @click="ui.toggleSidebar"><ChevronsLeft :size="16" /></button>
+      <button v-else class="hidden rounded p-1 lg:inline-flex" title="Perluas sidebar" aria-label="Perluas sidebar" @click="ui.toggleSidebar"><ChevronsRight :size="16" /></button>
       <DevspaceLogo v-if="isCollapsed" :size="26" class="lg:hidden" />
       <div v-if="!isCollapsed" class="min-w-0 flex-1"><div class="text-[13px] font-bold leading-none tracking-tight text-[#172033]">DEVSPACE</div><div class="mt-0.5 text-[10px] font-medium leading-none tracking-wide text-[#9CA3AF]">Invoicing &amp; Billing</div></div>
       <button v-if="!isCollapsed" class="hidden rounded p-1 text-[#A0AABB] hover:bg-[#F5F7FA] hover:text-[#667085] lg:inline-flex" aria-label="Ciutkan sidebar" @click="ui.toggleSidebar"><ChevronsLeft :size="16" /></button>

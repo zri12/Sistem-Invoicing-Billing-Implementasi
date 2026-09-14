@@ -12,10 +12,7 @@ return new class extends Migration
             $table->id();
             $table->date('income_date');
             $table->enum('source_type', ['invoice', 'manual']);
-            // Free-text display detail (locked decision), independent from source_type.
             $table->string('source')->nullable();
-            // Unique: enforces exactly one Income per Payment (prevents duplicate
-            // payment-derived income rows), nullable for manual (non-invoice) income.
             $table->foreignId('payment_id')->nullable()->unique()->constrained('payments')->cascadeOnDelete();
             $table->foreignId('invoice_id')->nullable()->constrained('invoices')->nullOnDelete();
             $table->string('category');

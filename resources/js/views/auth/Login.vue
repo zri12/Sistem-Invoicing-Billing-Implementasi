@@ -18,7 +18,6 @@ const usernameError = ref('');
 const passwordError = ref('');
 const shapes = Array.from({ length: 8 }, (_, index) => ({ width: `${80 + index * 60}px`, height: `${80 + index * 60}px`, transform: `translate(-50%, -50%) rotate(${index * 15}deg)` }));
 
-const useDemo = (demoUsername, demoPassword) => { username.value = demoUsername; password.value = demoPassword; error.value = ''; };
 const submit = async () => {
     error.value = '';
     usernameError.value = username.value.trim() ? '' : 'Username wajib diisi.';
@@ -48,7 +47,6 @@ const submit = async () => {
                     <p v-if="error" class="rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-600">{{ error }}</p>
                     <BaseButton type="submit" class="mt-2 w-full" size="lg" :disabled="loading">{{ loading ? 'Memproses...' : 'Masuk' }}</BaseButton>
                 </form>
-                <div class="mt-6 border-t border-[#E2E6EC] pt-4"><p class="mb-3 text-center text-xs text-[#9CA3AF]">Demo akun tersedia:</p><div class="grid grid-cols-1 gap-2 sm:grid-cols-2"><button type="button" class="rounded border border-[#E2E6EC] px-3 py-2 text-left text-[11px] text-[#667085] hover:bg-gray-50" @click="useDemo('fazrilukman', 'admin123')"><span class="block font-medium text-[#172033]">Admin / Finance</span><span>fazrilukman</span></button><button type="button" class="rounded border border-[#E2E6EC] px-3 py-2 text-left text-[11px] text-[#667085] hover:bg-gray-50" @click="useDemo('fahminashruddin', 'manager123')"><span class="block font-medium text-[#172033]">Pimpinan / Manager</span><span>fahminashruddin</span></button></div></div>
             </section>
             <p class="mt-6 text-center text-xs text-[#9CA3AF]">PT. Ruang Kreasi Aplikasi © 2026</p>
         </div>

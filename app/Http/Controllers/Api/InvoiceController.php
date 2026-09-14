@@ -97,11 +97,49 @@ class InvoiceController extends Controller
         return $this->success(new InvoiceResource($invoice->load(['client', 'paymentAccount', 'items'])));
     }
 
-    public function pdf(Invoice $invoice, InvoicePdfService $pdfService)
+    public function pdf(\Illuminate\Http\Request $request, Invoice $invoice, InvoicePdfService $pdfService)
     {
         $this->authorize('view', $invoice);
+        // Rendering dapat memakan beberapa detik pada shared hosting. Lepaskan
+        // lock session agar permintaan data/menu lain tidak ikut menunggu.
+        if ($request->hasSession()) {
+            $request->session()->save();
+        }
         $filename = 'invoice-'.str_replace(['/', '\\'], '-', $invoice->invoice_number).'.pdf';
 
-        return $pdfService->render($invoice)->stream($filename);
+        try {
+            $bytes = $pdfService->output($invoice);
+            if ($request->boolean('warm')) {
+                return response()->noContent();
+            }
+
+            return response($bytes, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+                'Content-Length' => (string) strlen($bytes),
+            ]);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            try {
+                // Hosting shared kadang gagal mendaftarkan font atau memproses
+                // gambar tertentu. Tetap kirim template perusahaan, dengan
+                // renderer yang lebih toleran; jangan kembali ke PDF Courier.
+                $bytes = $pdfService->renderResilient($invoice)->output();
+
+                return response($bytes, 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+                    'Content-Length' => (string) strlen($bytes),
+                ]);
+            } catch (\Throwable $fallbackException) {
+                report($fallbackException);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'PDF invoice gagal dibuat oleh server. Periksa log Laravel atau konfigurasi PHP hosting.',
+                ], 500);
+            }
+        }
     }
 }

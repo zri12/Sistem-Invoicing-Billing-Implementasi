@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 import financeService from '@/services/financeService';
 
+let incomeListRequest = null;
+let expenseListRequest = null;
+
 export const useFinanceStore = defineStore('finance', {
     state: () => ({ incomes: [], expenses: [], loaded: { incomes: false, expenses: false } }),
     getters: {
@@ -14,8 +17,16 @@ export const useFinanceStore = defineStore('finance', {
         },
     },
     actions: {
-        async ensureIncomes() { if (!this.loaded.incomes) { this.incomes = await financeService.listIncomes(); this.loaded.incomes = true; } },
-        async ensureExpenses() { if (!this.loaded.expenses) { this.expenses = await financeService.listExpenses(); this.loaded.expenses = true; } },
+        async ensureIncomes() {
+            if (this.loaded.incomes) return;
+            if (!incomeListRequest) incomeListRequest = financeService.listIncomes().then((incomes) => { this.incomes = incomes; this.loaded.incomes = true; }).finally(() => { incomeListRequest = null; });
+            await incomeListRequest;
+        },
+        async ensureExpenses() {
+            if (this.loaded.expenses) return;
+            if (!expenseListRequest) expenseListRequest = financeService.listExpenses().then((expenses) => { this.expenses = expenses; this.loaded.expenses = true; }).finally(() => { expenseListRequest = null; });
+            await expenseListRequest;
+        },
         async ensure() { await Promise.all([this.ensureIncomes(), this.ensureExpenses()]); },
         async addManualIncome(income) {
             const amount = Number(income.amount || 0);

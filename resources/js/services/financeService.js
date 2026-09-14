@@ -1,6 +1,6 @@
 import api from '@/services/api';
 
-const incomeFromApi = (i) => ({
+export const incomeFromApi = (i) => ({
     id: i.id,
     source: i.source_type === 'invoice' ? 'invoice' : 'manual',
     paymentId: i.payment_id,
@@ -15,7 +15,7 @@ const incomeFromApi = (i) => ({
     notes: i.notes || '',
 });
 
-const expenseFromApi = (e) => ({
+export const expenseFromApi = (e) => ({
     id: e.id,
     date: e.expense_date,
     vendorId: e.vendor_id,

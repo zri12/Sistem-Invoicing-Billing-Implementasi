@@ -1,7 +1,6 @@
 import api from '@/services/api';
 
-// snake_case API <-> Indonesian/camelCase Pinia shape, per
-// docs/backend/FRONTEND_BACKEND_MAPPING.md sections 7-10.
+// Translates the snake_case API to the Indonesian/camelCase Pinia shape.
 const clientFromApi = (c) => ({ id: c.id, nama: c.name, pic: c.pic_name, alamat: c.address, telepon: c.phone, email: c.email, catatan: c.notes, status: c.status, jumlah: c.invoice_count ?? 0 });
 const clientToApi = (v) => ({ name: v.nama, pic_name: v.pic || null, address: v.alamat || null, phone: v.telepon || null, email: v.email || null, notes: v.catatan || null });
 
@@ -20,6 +19,8 @@ const registry = {
     product: { path: '/products-services', from: productFromApi, to: productToApi },
     account: { path: '/accounts', from: accountFromApi, to: accountToApi },
 };
+
+export const masterDataFromApi = (kind, records) => records.map(registry[kind].from);
 
 export default {
     async list(kind) {

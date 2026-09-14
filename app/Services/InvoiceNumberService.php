@@ -6,14 +6,7 @@ use App\Models\InvoiceNumberSetting;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Concurrency-safe invoice number generation. Uses a single settings row with
- * a row-level lock (SELECT ... FOR UPDATE inside a transaction) plus an
- * atomic increment, so two simultaneous invoice creations cannot receive the
- * same sequence number. Reset policy is locked to "continuous" per the
- * approved decision (D-007 resolved this session) - month/year are used only
- * for formatting, never for resetting the counter.
- */
+/** Generates nomor invoice secara atomik agar nomor urut tidak duplikat. */
 class InvoiceNumberService
 {
     private const ROMAN_MONTHS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
