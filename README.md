@@ -57,10 +57,6 @@ php artisan serve
 php artisan test
 ```
 
-Pengujian browser kedua role memakai database terisolasi. Petunjuk runner ada
-di [tests/browser/README.md](tests/browser/README.md), dan laporan audit lengkap
-ada di [FULL_SYSTEM_QA_REPORT_2026-11-17.md](FULL_SYSTEM_QA_REPORT_2026-11-17.md).
-
 ## Deployment
 
 Source Laravel ditempatkan pada root aplikasi. Isi folder `public/` harus
