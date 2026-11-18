@@ -18,7 +18,7 @@ class UpdateIncomeRequest extends FormRequest
             'source' => ['nullable', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
+            'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01'],
             'account_id' => ['required', 'integer', 'exists:accounts,id'],
             'notes' => ['nullable', 'string'],
         ];

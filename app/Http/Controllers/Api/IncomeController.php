@@ -24,9 +24,9 @@ class IncomeController extends Controller
             ->when($request->filled('category'), fn ($q) => $q->where('category', $request->string('category')))
             ->when($request->filled('account_id'), fn ($q) => $q->where('account_id', $request->integer('account_id')))
             ->when($request->filled('source_type'), fn ($q) => $q->where('source_type', $request->string('source_type')))
-            ->when($request->filled('from'), fn ($q) => $q->where('income_date', '>=', $request->string('from')))
-            ->when($request->filled('to'), fn ($q) => $q->where('income_date', '<=', $request->string('to')))
-            ->latest('income_date')
+            ->when($request->filled('from'), fn ($q) => $q->whereDate('income_date', '>=', $request->string('from')))
+            ->when($request->filled('to'), fn ($q) => $q->whereDate('income_date', '<=', $request->string('to')))
+            ->latest('income_date')->latest('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([

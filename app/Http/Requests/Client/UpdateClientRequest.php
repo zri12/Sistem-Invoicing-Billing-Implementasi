@@ -15,6 +15,7 @@ class UpdateClientRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'status' => ['sometimes', 'in:aktif,nonaktif'],
             'pic_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string'],
             'phone' => ['nullable', 'string', 'max:50'],

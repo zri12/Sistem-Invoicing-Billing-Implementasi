@@ -46,6 +46,7 @@ Atur koneksi database pada `.env`, lalu jalankan migration dan build frontend:
 
 ```bash
 php artisan migrate --seed
+php artisan storage:link
 npm run build
 php artisan serve
 ```
@@ -55,6 +56,10 @@ php artisan serve
 ```bash
 php artisan test
 ```
+
+Pengujian browser kedua role memakai database terisolasi. Petunjuk runner ada
+di [tests/browser/README.md](tests/browser/README.md), dan laporan audit lengkap
+ada di [FULL_SYSTEM_QA_REPORT_2026-11-17.md](FULL_SYSTEM_QA_REPORT_2026-11-17.md).
 
 ## Deployment
 

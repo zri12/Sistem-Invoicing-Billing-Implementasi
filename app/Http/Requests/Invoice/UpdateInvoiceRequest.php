@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Invoice;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateInvoiceRequest extends FormRequest
 {
@@ -15,18 +16,19 @@ class UpdateInvoiceRequest extends FormRequest
     {
         return [
             'invoice_name' => ['required', 'string', 'max:255'],
-            'client_id' => ['required', 'integer', 'exists:clients,id'],
+            'client_id' => ['required', 'integer', Rule::exists('clients', 'id')->where(fn ($q) => $q->where('status', 'aktif')->orWhere('id', $this->route('invoice')->client_id))],
             'invoice_date' => ['required', 'date'],
             'due_date' => ['required', 'date', 'after_or_equal:invoice_date'],
-            'payment_account_id' => ['required', 'integer', 'exists:accounts,id'],
-            'discount' => ['nullable', 'numeric', 'min:0'],
+            'payment_account_id' => ['required', 'integer', Rule::exists('accounts', 'id')->where(fn ($q) => $q->where('status', 'aktif')->orWhere('id', $this->route('invoice')->payment_account_id))],
+            'discount' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
             'payment_terms' => ['nullable', 'string'],
             'invoice_notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.product_service_id' => ['nullable', 'integer', 'exists:products_services,id'],
+            'items.*.id' => ['sometimes', 'integer'],
+            'items.*.product_service_id' => ['nullable', 'integer', Rule::exists('products_services', 'id')->where(fn ($q) => $q->where('status', 'aktif')->orWhereIn('id', $this->route('invoice')->items()->pluck('product_service_id')))],
             'items.*.description' => ['required', 'string'],
-            'items.*.price' => ['required', 'numeric', 'min:0.01'],
-            'items.*.qty' => ['required', 'numeric', 'min:0.01'],
+            'items.*.price' => ['required', 'numeric', 'decimal:0,2', 'min:0.01'],
+            'items.*.qty' => ['required', 'numeric', 'decimal:0,2', 'min:0.01'],
         ];
     }
 }

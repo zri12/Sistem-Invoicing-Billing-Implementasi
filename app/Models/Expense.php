@@ -28,6 +28,9 @@ class Expense extends Model
     protected function casts(): array
     {
         return [
+            'vendor_id' => 'integer',
+            'source_account_id' => 'integer',
+            'created_by' => 'integer',
             'expense_date' => 'date',
             'amount' => 'decimal:2',
         ];

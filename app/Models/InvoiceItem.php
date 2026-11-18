@@ -23,6 +23,8 @@ class InvoiceItem extends Model
     protected function casts(): array
     {
         return [
+            'invoice_id' => 'integer',
+            'product_service_id' => 'integer',
             'qty' => 'decimal:2',
             'price' => 'decimal:2',
             'total' => 'decimal:2',

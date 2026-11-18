@@ -13,8 +13,8 @@ class ReportService
     public function cashbook(array $filters): array
     {
         $incomes = Income::query()
-            ->when($filters['from'] ?? null, fn ($q, $v) => $q->where('income_date', '>=', $v))
-            ->when($filters['to'] ?? null, fn ($q, $v) => $q->where('income_date', '<=', $v))
+            ->when($filters['from'] ?? null, fn ($q, $v) => $q->whereDate('income_date', '>=', $v))
+            ->when($filters['to'] ?? null, fn ($q, $v) => $q->whereDate('income_date', '<=', $v))
             ->when($filters['account_id'] ?? null, fn ($q, $v) => $q->where('account_id', $v))
             ->get()
             ->map(fn (Income $income) => [
@@ -28,8 +28,8 @@ class ReportService
             ]);
 
         $expenses = Expense::query()
-            ->when($filters['from'] ?? null, fn ($q, $v) => $q->where('expense_date', '>=', $v))
-            ->when($filters['to'] ?? null, fn ($q, $v) => $q->where('expense_date', '<=', $v))
+            ->when($filters['from'] ?? null, fn ($q, $v) => $q->whereDate('expense_date', '>=', $v))
+            ->when($filters['to'] ?? null, fn ($q, $v) => $q->whereDate('expense_date', '<=', $v))
             ->when($filters['account_id'] ?? null, fn ($q, $v) => $q->where('source_account_id', $v))
             ->get()
             ->map(fn (Expense $expense) => [
@@ -43,14 +43,14 @@ class ReportService
             ]);
 
         $entries = $incomes->concat($expenses)->sortBy('date')->values();
-        $debit = (float) $incomes->sum('amount');
-        $credit = (float) $expenses->sum('amount');
+        $debit = round((float) $incomes->sum('amount'), 2);
+        $credit = round((float) $expenses->sum('amount'), 2);
 
         return [
             'entries' => $entries,
             'debit' => $debit,
             'credit' => $credit,
-            'balance' => $debit - $credit,
+            'balance' => round($debit - $credit, 2),
         ];
     }
 
@@ -58,8 +58,8 @@ class ReportService
     {
         return Invoice::query()
             ->with('client')
-            ->when($filters['from'] ?? null, fn ($q, $v) => $q->where('invoice_date', '>=', $v))
-            ->when($filters['to'] ?? null, fn ($q, $v) => $q->where('invoice_date', '<=', $v))
+            ->when($filters['from'] ?? null, fn ($q, $v) => $q->whereDate('invoice_date', '>=', $v))
+            ->when($filters['to'] ?? null, fn ($q, $v) => $q->whereDate('invoice_date', '<=', $v))
             ->when($filters['account_id'] ?? null, fn ($q, $v) => $q->where('payment_account_id', $v))
             ->orderBy('invoice_date')
             ->get();
@@ -69,8 +69,8 @@ class ReportService
     {
         return Payment::query()
             ->with(['invoice', 'account'])
-            ->when($filters['from'] ?? null, fn ($q, $v) => $q->where('payment_date', '>=', $v))
-            ->when($filters['to'] ?? null, fn ($q, $v) => $q->where('payment_date', '<=', $v))
+            ->when($filters['from'] ?? null, fn ($q, $v) => $q->whereDate('payment_date', '>=', $v))
+            ->when($filters['to'] ?? null, fn ($q, $v) => $q->whereDate('payment_date', '<=', $v))
             ->when($filters['account_id'] ?? null, fn ($q, $v) => $q->where('account_id', $v))
             ->orderBy('payment_date')
             ->get();
@@ -80,8 +80,8 @@ class ReportService
     {
         return Income::query()
             ->with('invoice.client')
-            ->when($filters['from'] ?? null, fn ($q, $v) => $q->where('income_date', '>=', $v))
-            ->when($filters['to'] ?? null, fn ($q, $v) => $q->where('income_date', '<=', $v))
+            ->when($filters['from'] ?? null, fn ($q, $v) => $q->whereDate('income_date', '>=', $v))
+            ->when($filters['to'] ?? null, fn ($q, $v) => $q->whereDate('income_date', '<=', $v))
             ->when($filters['account_id'] ?? null, fn ($q, $v) => $q->where('account_id', $v))
             ->orderBy('income_date')
             ->get();
@@ -91,8 +91,8 @@ class ReportService
     {
         return Expense::query()
             ->with('vendor')
-            ->when($filters['from'] ?? null, fn ($q, $v) => $q->where('expense_date', '>=', $v))
-            ->when($filters['to'] ?? null, fn ($q, $v) => $q->where('expense_date', '<=', $v))
+            ->when($filters['from'] ?? null, fn ($q, $v) => $q->whereDate('expense_date', '>=', $v))
+            ->when($filters['to'] ?? null, fn ($q, $v) => $q->whereDate('expense_date', '<=', $v))
             ->when($filters['account_id'] ?? null, fn ($q, $v) => $q->where('source_account_id', $v))
             ->orderBy('expense_date')
             ->get();

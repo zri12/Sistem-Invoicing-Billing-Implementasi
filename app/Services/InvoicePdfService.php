@@ -28,7 +28,7 @@ class InvoicePdfService
             is_file(__FILE__) ? filemtime(__FILE__) : null,
             $this->fontFingerprint(),
         ], JSON_UNESCAPED_UNICODE));
-        $cacheDirectory = storage_path('app/dompdf/cache');
+        $cacheDirectory = config('invoice.pdf_storage_path').'/cache';
         $cachePath = $cacheDirectory.'/'.$invoice->getKey().'-'.$fingerprint.'.pdf';
 
         if (!is_dir($cacheDirectory)) {
@@ -111,7 +111,7 @@ class InvoicePdfService
 
         $this->registerCorporateFonts($pdf);
 
-        return $pdf;
+        return $this->numberPages($pdf);
     }
 
     /**
@@ -135,7 +135,7 @@ class InvoicePdfService
             (bool) $template->show_signature,
         );
 
-        return Pdf::setOption($this->dompdfOptions())->loadView('pdf.invoice', [
+        $pdf = Pdf::setOption($this->dompdfOptions())->loadView('pdf.invoice', [
             'invoice' => $invoice,
             'company' => $company,
             'template' => $template,
@@ -144,6 +144,19 @@ class InvoicePdfService
             'signaturePath' => $signaturePath,
             'signatureFramePath' => $signatureFramePath,
         ])->setPaper('a4', 'portrait');
+
+        return $this->numberPages($pdf);
+    }
+
+    private function numberPages($pdf)
+    {
+        $pdf->render();
+        $dompdf = $pdf->getDomPDF();
+        $font = $dompdf->getFontMetrics()->getFont('Tamil Sangam MN PDF', 'normal')
+            ?: $dompdf->getFontMetrics()->getFont('DejaVu Sans', 'normal');
+        $canvas = $dompdf->getCanvas();
+        $canvas->page_text($canvas->get_width() - 64, $canvas->get_height() - 50, '{PAGE_NUM}', $font, 10.08);
+        return $pdf;
     }
 
     /**
@@ -272,7 +285,7 @@ class InvoicePdfService
             return null;
         }
 
-        $path = storage_path('app/public/'.$relativePath);
+        $path = \Illuminate\Support\Facades\Storage::disk('public')->path($relativePath);
         $imageInfo = is_file($path) ? @getimagesize($path) : false;
         $supportedTypes = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF];
 
@@ -293,7 +306,7 @@ class InvoicePdfService
     private function assetFingerprint(Company $company): array
     {
         return array_map(function (?string $relativePath) {
-            $path = $relativePath ? storage_path('app/public/'.$relativePath) : null;
+            $path = $relativePath ? \Illuminate\Support\Facades\Storage::disk('public')->path($relativePath) : null;
 
             return $path && is_file($path) ? [$relativePath, filesize($path), filemtime($path)] : null;
         }, [$company->logo_path, $company->stamp_path, $company->signature_path]);
@@ -324,7 +337,7 @@ class InvoicePdfService
             return $sourcePath;
         }
 
-        $assetDirectory = storage_path('app/dompdf/assets');
+        $assetDirectory = config('invoice.pdf_storage_path').'/assets';
         if (!is_dir($assetDirectory)) {
             @mkdir($assetDirectory, 0755, true);
         }
@@ -392,7 +405,7 @@ class InvoicePdfService
             return null;
         }
 
-        $assetDirectory = storage_path('app/dompdf/assets');
+        $assetDirectory = config('invoice.pdf_storage_path').'/assets';
         if (!is_dir($assetDirectory)) {
             @mkdir($assetDirectory, 0755, true);
         }
@@ -455,7 +468,7 @@ class InvoicePdfService
     {
         // Shared hosting sering membatasi direktori temporary sistem (/tmp).
         // Gunakan storage Laravel yang sudah wajib writable pada cPanel.
-        $directory = storage_path('app/dompdf');
+        $directory = config('invoice.pdf_storage_path');
         if (!is_dir($directory)) {
             @mkdir($directory, 0755, true);
         }

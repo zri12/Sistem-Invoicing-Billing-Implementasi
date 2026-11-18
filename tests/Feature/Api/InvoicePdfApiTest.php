@@ -15,6 +15,13 @@ class InvoicePdfApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_guest_print_redirects_to_login(): void
+    {
+        $invoice = Invoice::factory()->create();
+
+        $this->get('/invoice/'.$invoice->id.'/print')->assertRedirect('/login');
+    }
+
     public function test_admin_can_download_invoice_pdf(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

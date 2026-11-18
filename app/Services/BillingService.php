@@ -16,7 +16,8 @@ class BillingService
         $totalPaid = $invoice->relationLoaded('payments')
             ? (float) $invoice->payments->sum('amount')
             : (float) $invoice->payments()->sum('amount');
-        $remaining = max(0.0, $total - $totalPaid);
+        $totalPaid = round($totalPaid, 2);
+        $remaining = max(0.0, round($total - $totalPaid, 2));
 
         return [
             'total' => $total,
@@ -32,11 +33,11 @@ class BillingService
      */
     private function status(Invoice $invoice, float $total, float $totalPaid, float $remaining): string
     {
-        if ($remaining <= 0 && $totalPaid > 0) {
+        if ($remaining <= 0) {
             return 'paid';
         }
 
-        if ($invoice->due_date && $invoice->due_date->lt(Carbon::today())) {
+        if ($invoice->due_date && $invoice->due_date->format('Y-m-d') < Carbon::now(config('app.business_timezone'))->toDateString()) {
             return 'overdue';
         }
 

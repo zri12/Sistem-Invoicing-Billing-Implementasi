@@ -15,10 +15,11 @@ class UpdateAccountRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'status' => ['sometimes', 'in:aktif,nonaktif'],
             'account_number' => ['nullable', 'string', 'max:100'],
             'account_holder' => ['nullable', 'string', 'max:255'],
             'branch' => ['nullable', 'string', 'max:255'],
-            'opening_balance' => ['nullable', 'numeric', 'min:0'],
+            'opening_balance' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
         ];
     }
 }

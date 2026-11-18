@@ -18,7 +18,7 @@ class InvoiceService
     {
         return DB::transaction(function () use ($data, $userId) {
             $items = $this->buildItems($data['items']);
-            $subtotal = array_sum(array_column($items, 'total'));
+            $subtotal = round(array_sum(array_column($items, 'total')), 2);
             $discount = (float) ($data['discount'] ?? 0);
             $this->validateDiscount($discount, $subtotal);
 
@@ -47,16 +47,23 @@ class InvoiceService
     public function update(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
+            $invoice = Invoice::query()->lockForUpdate()->findOrFail($invoice->id);
             if ($invoice->document_status === 'cancelled') {
                 throw ValidationException::withMessages([
                     'document_status' => ['Invoice yang sudah dibatalkan tidak dapat diedit.'],
                 ]);
             }
 
-            $items = $this->buildItems($data['items']);
-            $subtotal = array_sum(array_column($items, 'total'));
+            $items = $this->buildItems($data['items'], $invoice);
+            $subtotal = round(array_sum(array_column($items, 'total')), 2);
             $discount = (float) ($data['discount'] ?? 0);
             $this->validateDiscount($discount, $subtotal);
+
+            if ((int) round(($subtotal - $discount) * 100) < (int) round((float) $invoice->payments()->sum('amount') * 100)) {
+                throw ValidationException::withMessages([
+                    'discount' => ['Total invoice tidak boleh lebih kecil dari pembayaran yang sudah tercatat.'],
+                ]);
+            }
 
             // invoice_number and document_status are intentionally never
             // touched here - number is immutable after creation, and status
@@ -117,15 +124,22 @@ class InvoiceService
         return $invoice;
     }
 
-    private function buildItems(array $items): array
+    private function buildItems(array $items, ?Invoice $invoice = null): array
     {
-        return array_map(function (array $item) {
+        $existing = $invoice?->items()->orderBy('id')->get();
+
+        return array_map(function (array $item, int $index) use ($existing) {
             $price = (float) $item['price'];
             $qty = (float) $item['qty'];
             $productName = null;
 
             if (! empty($item['product_service_id'])) {
-                $productName = ProductService::find($item['product_service_id'])?->name;
+                $previous = isset($item['id']) ? $existing?->firstWhere('id', $item['id']) : $existing?->get($index);
+                if (isset($item['id']) && ! $previous) {
+                    throw ValidationException::withMessages(['items' => ['Item invoice tidak valid.']]);
+                }
+                $productName = $previous && (int) $previous->product_service_id === (int) $item['product_service_id']
+                    ? $previous->product_name : ProductService::find($item['product_service_id'])?->name;
             }
 
             return [
@@ -134,9 +148,9 @@ class InvoiceService
                 'description' => $item['description'],
                 'qty' => $qty,
                 'price' => $price,
-                'total' => $price * $qty,
+                'total' => round($price * $qty, 2),
             ];
-        }, $items);
+        }, $items, array_keys($items));
     }
 
     private function validateDiscount(float $discount, float $subtotal): void

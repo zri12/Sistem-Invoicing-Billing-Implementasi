@@ -37,12 +37,16 @@ const accounts = computed(() => Array.from(new Map(
 
 const filtered = computed(() => payments.payments.filter((payment) => {
     const text = `${payment.invoiceNumber} ${payment.clientName}`.toLowerCase();
+    const previous = new Date(`${currentMonthKey()}-01T00:00:00`);
+    previous.setMonth(previous.getMonth() - 1);
+    const previousMonth = `${previous.getFullYear()}-${String(previous.getMonth() + 1).padStart(2, '0')}`;
     const periodMatch = period.value === 'semua'
-        || (period.value === 'bulan_ini' && payment.paymentDate.slice(0, 7) === currentMonthKey());
+        || (period.value === 'bulan_ini' && payment.paymentDate.slice(0, 7) === currentMonthKey())
+        || (period.value === 'bulan_lalu' && payment.paymentDate.slice(0, 7) === previousMonth);
 
     return text.includes(search.value.toLowerCase())
         && (method.value === 'semua' || payment.method === method.value)
-        && (account.value === 'semua' || payment.accountId === account.value)
+        && (account.value === 'semua' || String(payment.accountId) === String(account.value))
         && periodMatch;
 }));
 const rows = computed(() => filtered.value.slice((page.value - 1) * pageSize, page.value * pageSize));

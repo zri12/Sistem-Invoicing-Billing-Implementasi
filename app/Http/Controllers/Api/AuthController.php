@@ -89,28 +89,28 @@ class AuthController extends Controller
 
         return [
             'invoices' => InvoiceResource::collection(
-                Invoice::query()->with(['client', 'paymentAccount'])->latest('invoice_date')->limit(200)->get()
+                Invoice::query()->with(['client', 'paymentAccount'])->latest('invoice_date')->get()
             )->resolve($request),
             'payments' => PaymentResource::collection(
-                Payment::query()->with(['account', 'invoice.client'])->latest('payment_date')->limit(200)->get()
+                Payment::query()->with(['account', 'invoice.client'])->latest('payment_date')->get()
             )->resolve($request),
             'incomes' => IncomeResource::collection(
-                Income::query()->with('invoice.client')->latest('income_date')->limit(200)->get()
+                Income::query()->with('invoice.client')->latest('income_date')->get()
             )->resolve($request),
             'expenses' => ExpenseResource::collection(
-                Expense::query()->with('vendor')->latest('expense_date')->limit(200)->get()
+                Expense::query()->with('vendor')->latest('expense_date')->get()
             )->resolve($request),
             'clients' => ClientResource::collection(
-                Client::query()->withCount('invoices')->orderBy('name')->limit(100)->get()
+                Client::query()->withCount('invoices')->orderBy('name')->get()
             )->resolve($request),
             'vendors' => VendorResource::collection(
-                Vendor::query()->withCount('expenses')->orderBy('name')->limit(100)->get()
+                Vendor::query()->withCount('expenses')->orderBy('name')->get()
             )->resolve($request),
             'products' => ProductServiceResource::collection(
-                ProductService::query()->orderBy('name')->limit(100)->get()
+                ProductService::query()->orderBy('name')->get()
             )->resolve($request),
             'accounts' => AccountResource::collection(
-                Account::query()->orderBy('name')->limit(100)->get()
+                Account::query()->orderBy('name')->get()
             )->resolve($request),
             'company' => (new CompanyResource($company))->resolve($request),
             'template' => (new InvoiceTemplateSettingResource($template))->resolve($request),

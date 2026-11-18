@@ -22,7 +22,7 @@ class UserController extends Controller
         $users = User::query()
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('role'), fn ($q) => $q->where('role', $request->string('role')))
-            ->orderBy('name')
+            ->orderBy('name')->orderBy('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([
@@ -62,6 +62,11 @@ class UserController extends Controller
         }
 
         $data = $request->validated();
+        if ($request->user()->id === $user->id && ($data['status'] ?? 'aktif') === 'nonaktif') {
+            throw ValidationException::withMessages([
+                'status' => ['Pengguna yang sedang aktif tidak dapat menonaktifkan akun sendiri.'],
+            ]);
+        }
         if (empty($data['password'])) {
             unset($data['password']);
         }

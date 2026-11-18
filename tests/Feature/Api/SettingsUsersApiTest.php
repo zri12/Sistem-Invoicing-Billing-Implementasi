@@ -29,6 +29,23 @@ class SettingsUsersApiTest extends TestCase
         $this->assertNotNull($response->json('data.logo_url'));
     }
 
+    public function test_company_images_use_same_origin_urls_on_a_different_port(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $company = \App\Models\Company::factory()->create([
+            'logo_path' => 'company/logo.png',
+            'stamp_path' => 'company/stamp.png',
+            'signature_path' => 'company/signature.png',
+        ]);
+
+        $this->actingAs($admin)
+            ->getJson('http://127.0.0.1:8001/api/company')
+            ->assertOk()
+            ->assertJsonPath('data.logo_url', '/storage/'.$company->logo_path)
+            ->assertJsonPath('data.stamp_url', '/storage/'.$company->stamp_path)
+            ->assertJsonPath('data.signature_url', '/storage/'.$company->signature_path);
+    }
+
     public function test_manager_cannot_update_company_but_can_read(): void
     {
         $manager = User::factory()->create(['role' => 'manager']);
@@ -106,5 +123,20 @@ class SettingsUsersApiTest extends TestCase
         $this->actingAs($admin)->postJson('/api/users', [
             'name' => 'X', 'username' => 'taken', 'password' => 'password123', 'role' => 'manager',
         ])->assertStatus(422)->assertJsonValidationErrors('username');
+    }
+
+    public function test_users_can_be_created_and_updated_without_optional_email(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        foreach (['no-email-one', 'no-email-two'] as $username) {
+            $created = $this->actingAs($admin)->postJson('/api/users', [
+                'name' => 'User without email', 'username' => $username, 'email' => null,
+                'password' => 'password123', 'role' => 'manager',
+            ])->assertCreated()->assertJsonPath('data.email', null)->json('data');
+
+            $this->putJson('/api/users/'.$created['id'], [
+                'name' => 'Updated user', 'username' => $username, 'email' => null, 'role' => 'manager',
+            ])->assertOk()->assertJsonPath('data.email', null);
+        }
     }
 }

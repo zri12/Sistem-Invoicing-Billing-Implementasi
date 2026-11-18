@@ -28,7 +28,7 @@ class PaymentController extends Controller
             ->when($request->filled('invoice_id'), fn ($q) => $q->where('invoice_id', $request->integer('invoice_id')))
             ->when($request->filled('account_id'), fn ($q) => $q->where('account_id', $request->integer('account_id')))
             ->when($request->filled('method'), fn ($q) => $q->where('method', $request->string('method')))
-            ->latest('payment_date')
+            ->latest('payment_date')->latest('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([
@@ -46,13 +46,13 @@ class PaymentController extends Controller
     {
         $payment = $this->service->recordPayment($invoice, $request->validated(), $request->user()->id);
 
-        return $this->success(new PaymentResource($payment->load('account')), 'Pembayaran berhasil dicatat.', 201);
+        return $this->success(new PaymentResource($payment->load(['account', 'invoice.client', 'income'])), 'Pembayaran berhasil dicatat.', 201);
     }
 
     public function indexForInvoice(Invoice $invoice)
     {
         $this->authorize('viewAny', Payment::class);
-        $payments = $invoice->payments()->with('account')->latest('payment_date')->get();
+        $payments = $invoice->payments()->with('account')->latest('payment_date')->latest('id')->get();
 
         return $this->success(PaymentResource::collection($payments));
     }

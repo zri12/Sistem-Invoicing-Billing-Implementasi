@@ -19,6 +19,7 @@ class PaymentResource extends JsonResource
             'account_id' => $this->account_id,
             'account' => new AccountResource($this->whenLoaded('account')),
             'invoice' => new InvoiceResource($this->whenLoaded('invoice')),
+            'income' => new IncomeResource($this->whenLoaded('income')),
             'reference_number' => $this->reference_number,
             'proof_url' => $this->proof_path ? Storage::disk('public')->url($this->proof_path) : null,
             'notes' => $this->notes,

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import paymentService from '@/services/paymentService';
 import { todayIso } from '@/utils/formatters';
+import { useFinanceStore } from '@/stores/finance';
 
 const invoiceTotal = (invoice) => Number(invoice?.total || 0);
 let paymentListRequest = null;
@@ -10,7 +11,7 @@ export const usePaymentStore = defineStore('payment', {
     getters: {
         paymentsByInvoice: (state) => (invoiceId) => state.payments.filter((payment) => String(payment.invoiceId) === String(invoiceId)).sort((left, right) => right.paymentDate.localeCompare(left.paymentDate)),
         totalPaidByInvoice: (state) => (invoiceId) => state.payments.filter((payment) => String(payment.invoiceId) === String(invoiceId)).reduce((total, payment) => total + Number(payment.amount || 0), 0),
-        paymentSummaryByInvoice() { return (invoice) => { const total = invoiceTotal(invoice); const totalPaid = this.totalPaidByInvoice(invoice?.id); const remaining = Math.max(total - totalPaid, 0); const status = totalPaid >= total && total > 0 ? 'lunas' : invoice?.dueDate && todayIso() > invoice.dueDate ? 'jatuh_tempo' : totalPaid > 0 ? 'dibayar_sebagian' : 'belum_dibayar'; return { total, totalPaid, remaining, status }; }; },
+        paymentSummaryByInvoice() { return (invoice) => { const total = invoiceTotal(invoice); const totalPaid = Math.round(this.totalPaidByInvoice(invoice?.id) * 100) / 100; const remaining = Math.max(Math.round((total - totalPaid) * 100) / 100, 0); const status = totalPaid >= total ? 'lunas' : invoice?.dueDate && todayIso() > invoice.dueDate ? 'jatuh_tempo' : totalPaid > 0 ? 'dibayar_sebagian' : 'belum_dibayar'; return { total, totalPaid, remaining, status }; }; },
         invoiceIncomeEntries: (state) => state.payments.map((payment) => ({ source: 'invoice', paymentId: payment.id, invoiceId: payment.invoiceId, date: payment.paymentDate, amount: payment.amount, accountId: payment.accountId, description: `Pembayaran invoice ${payment.invoiceId}` })),
     },
     actions: {
@@ -34,6 +35,10 @@ export const usePaymentStore = defineStore('payment', {
             try {
                 const record = await paymentService.record(invoice.id, { ...payment, amount });
                 this.payments = [record, ...this.payments];
+                if (record.income) {
+                    const finance = useFinanceStore();
+                    finance.incomes = [record.income, ...finance.incomes.filter((income) => income.id !== record.income.id)];
+                }
                 return record;
             } catch (error) {
                 throw new Error(error.response?.data?.errors?.amount?.[0] || error.response?.data?.message || 'Gagal mencatat pembayaran.');

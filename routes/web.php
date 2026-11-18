@@ -7,6 +7,8 @@ Route::get('/', function () {
     return view('app');
 });
 
+Route::view('/login', 'app')->name('login');
+
 // Cetak menampilkan PDF yang sama persis dengan hasil Simpan PDF.
 Route::middleware('auth')->get('/invoice/{invoice}/print', [InvoicePrintController::class, 'show'])
     ->name('invoices.print');

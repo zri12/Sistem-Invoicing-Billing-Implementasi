@@ -18,7 +18,7 @@ class UpdateExpenseRequest extends FormRequest
             'vendor_id' => ['nullable', 'integer', 'exists:vendors,id'],
             'category' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
+            'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01'],
             'source_account_id' => ['required', 'integer', 'exists:accounts,id'],
             'transaction_type' => ['required', 'in:cash,qris,credit,transfer'],
             'destination_account' => ['required_if:transaction_type,transfer', 'nullable', 'string', 'max:255'],

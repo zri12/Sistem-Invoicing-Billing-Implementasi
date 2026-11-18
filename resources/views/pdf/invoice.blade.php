@@ -40,7 +40,7 @@
     .bill-left p { margin: 4pt 0 0; line-height: 1.05; }
     .bill-right { width: 50%; vertical-align: top; padding-left: 7px; }
     .bill-right p { margin: 4pt 0 0; }
-    table.items { width: 100%; margin-top: 57px; }
+    table.items { width: 100%; margin-top: 57px; page-break-inside: avoid; }
     table.items th, table.items td { border: 1px solid #7b7b7b; padding: 2px 8px; }
     table.items th { background: #f4f4f4; text-align: center; }
     table.items td.desc { text-align: left; }
@@ -56,7 +56,8 @@
        oleh panjang deskripsi item, sehingga selalu utuh pada satu halaman A4. */
     .signature-section { position: fixed; right: 0; bottom: 134px; width: 100%; }
     .signature-box { width: 240px; text-align: center; margin-left: auto; }
-    .signature-frame { position: relative; width: 225px; height: 60px; margin: 8px auto; text-align: center; overflow: visible; }
+    .signature-frame { position: relative; width: 225px; height: 96px; margin: 8px auto; text-align: center; overflow: visible; }
+    .signature-section--flow { position: static; margin-top: 30px; page-break-inside: avoid; }
     .signature-frame .stamp-artwork { position: absolute; top: 0; left: 0; width: 225px; height: 60px; object-fit: contain; filter: grayscale(1) contrast(1.25); }
     /* Preview browser menampilkan file TTD pada tinggi 58 px, lalu
        translateY(14 px) dan scale(1.65). Dompdf tidak menghitung kombinasi
@@ -125,8 +126,10 @@
                 @endif
             </td>
             <td class="bill-right">
+                @if($template->show_total)
                 <b>Total Due:</b>
                 <p style="font-size: 11.04pt;">Rp. {{ number_format($invoice->total, 0, ',', '.') }}</p>
+                @endif
             </td>
         </tr>
     </table>
@@ -187,7 +190,15 @@
     </div>
 
     @if($template->show_stamp || $template->show_signature)
-    <div class="signature-section">
+    @php
+        // Long/multiple-item documents must place signatures after the content,
+        // rather than overlaying growing terms/tables at a fixed page position.
+        $flowSignature = $invoice->items->count() > 1
+            || $invoice->items->sum(fn ($item) => mb_strlen($item->description ?? '')) > 250
+            || mb_strlen($invoice->payment_terms ?? '') > 200
+            || mb_strlen($invoice->client->name ?? '') + mb_strlen($invoice->client->address ?? '') > 180;
+    @endphp
+    <div class="signature-section {{ $flowSignature ? 'signature-section--flow' : '' }}">
         <div class="signature-box">
             <p>{{ $company->signing_city ?: '-' }}, {{ \Carbon\Carbon::parse($invoice->invoice_date)->translatedFormat('d F Y') }}</p>
             <div class="signature-frame">
@@ -209,7 +220,7 @@
         <table style="width: 100%;">
             <tr>
                 <td>INVOICE<br>No. {{ $invoice->invoice_number }}</td>
-                <td style="text-align: right;">1</td>
+                <td></td>
             </tr>
         </table>
     </div>

@@ -16,8 +16,9 @@ class StoreProductServiceRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'status' => ['sometimes', 'in:aktif,nonaktif'],
             'description' => ['nullable', 'string'],
-            'default_price' => ['required', 'numeric', 'min:0'],
+            'default_price' => ['required', 'numeric', 'decimal:0,2', 'min:0'],
             'unit' => ['nullable', 'string', 'max:50'],
         ];
     }

@@ -21,7 +21,7 @@ class AccountController extends Controller
         $accounts = Account::query()
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%'.$request->string('search').'%'))
-            ->orderBy('name')
+            ->orderBy('name')->orderBy('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([
@@ -37,7 +37,7 @@ class AccountController extends Controller
 
     public function store(StoreAccountRequest $request)
     {
-        $account = Account::create([...$request->validated(), 'status' => 'aktif']);
+        $account = Account::create([...$request->validated(), 'status' => $request->validated('status') ?? 'aktif']);
 
         return $this->success(new AccountResource($account), 'Rekening berhasil ditambahkan.', 201);
     }

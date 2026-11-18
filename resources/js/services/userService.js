@@ -1,11 +1,10 @@
-import api from '@/services/api';
+import api, { fetchAll } from '@/services/api';
 
 const fromApi = (u) => ({ id: u.id, name: u.name, email: u.email || '', username: u.username, role: u.role, status: u.status, createdAt: u.created_at });
 
 export default {
     async list() {
-        const { data } = await api.get('/users', { params: { per_page: 200 } });
-        return data.data.items.map(fromApi);
+        return (await fetchAll('/users')).map(fromApi);
     },
     async create(payload) {
         const { data } = await api.post('/users', {
@@ -15,7 +14,7 @@ export default {
         return fromApi(data.data);
     },
     async update(id, payload) {
-        const body = { name: payload.name, username: payload.username, email: payload.email || null, role: payload.role };
+        const body = { name: payload.name, username: payload.username, email: payload.email || null, role: payload.role, status: payload.status };
         if (payload.password) body.password = payload.password;
         const { data } = await api.put(`/users/${id}`, body);
         return fromApi(data.data);

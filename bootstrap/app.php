@@ -46,6 +46,15 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage() ?: 'Aksi ini tidak diizinkan.',
+                ], 403);
+            }
+        });
+
         $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([

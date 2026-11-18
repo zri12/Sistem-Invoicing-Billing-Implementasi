@@ -30,6 +30,9 @@ class Invoice extends Model
     protected function casts(): array
     {
         return [
+            'client_id' => 'integer',
+            'payment_account_id' => 'integer',
+            'created_by' => 'integer',
             'invoice_date' => 'date',
             'due_date' => 'date',
             'subtotal' => 'decimal:2',
