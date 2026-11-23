@@ -16,7 +16,7 @@ class StoreIncomeRequest extends FormRequest
     {
         return [
             'income_date' => ['required', 'date'],
-            'source' => ['nullable', 'string', 'max:255'],
+            'source' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'amount' => ['required', 'numeric', 'min:0.01'],

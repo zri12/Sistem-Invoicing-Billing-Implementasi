@@ -22,9 +22,16 @@ class CompanyResource extends JsonResource
             'signing_city' => $this->signing_city,
             'signer_name' => $this->signer_name,
             'signer_title' => $this->signer_title,
-            'logo_url' => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : null,
-            'stamp_url' => $this->stamp_path ? Storage::disk('public')->url($this->stamp_path) : null,
-            'signature_url' => $this->signature_path ? Storage::disk('public')->url($this->signature_path) : null,
+            'logo_url' => $this->publicAssetUrl($this->logo_path, 'logo'),
+            'stamp_url' => $this->publicAssetUrl($this->stamp_path, 'stamp'),
+            'signature_url' => $this->publicAssetUrl($this->signature_path, 'signature'),
         ];
+    }
+
+    private function publicAssetUrl(?string $path, string $field): ?string
+    {
+        $disk = Storage::disk('public');
+
+        return $path && $disk->exists($path) ? route('company.assets', $field, false) : null;
     }
 }

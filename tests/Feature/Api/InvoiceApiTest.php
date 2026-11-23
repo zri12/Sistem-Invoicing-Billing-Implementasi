@@ -27,6 +27,7 @@ class InvoiceApiTest extends TestCase
             'due_date' => '2026-08-15',
             'payment_account_id' => $account->id,
             'discount' => 0,
+            'payment_terms' => 'Pembayaran sesuai kesepakatan',
             'items' => [
                 ['description' => 'Item A', 'price' => 1000000, 'qty' => 2],
             ],
@@ -121,9 +122,12 @@ class InvoiceApiTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $invoice = Invoice::factory()->create(['document_status' => 'draft']);
+        \App\Models\InvoiceItem::factory()->for($invoice)->create(['description' => 'Rincian tersimpan']);
 
         $this->actingAs($admin)->postJson("/api/invoices/{$invoice->id}/publish")
-            ->assertOk()->assertJsonPath('data.document_status', 'published');
+            ->assertOk()->assertJsonPath('data.document_status', 'published')
+            ->assertJsonPath('data.client.id', $invoice->client_id)
+            ->assertJsonPath('data.items.0.description', 'Rincian tersimpan');
 
         $this->actingAs($admin)->postJson("/api/invoices/{$invoice->id}/publish")
             ->assertStatus(422);
@@ -142,9 +146,12 @@ class InvoiceApiTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $invoice = Invoice::factory()->create(['document_status' => 'draft']);
+        \App\Models\InvoiceItem::factory()->for($invoice)->create(['description' => 'Rincian tersimpan']);
 
         $this->actingAs($admin)->postJson("/api/invoices/{$invoice->id}/cancel")
-            ->assertOk()->assertJsonPath('data.document_status', 'cancelled');
+            ->assertOk()->assertJsonPath('data.document_status', 'cancelled')
+            ->assertJsonPath('data.client.id', $invoice->client_id)
+            ->assertJsonPath('data.items.0.description', 'Rincian tersimpan');
     }
 
     public function test_manager_cannot_create_update_publish_or_cancel(): void

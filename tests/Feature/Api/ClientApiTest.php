@@ -36,7 +36,7 @@ class ClientApiTest extends TestCase
 
         $response = $this->actingAs($admin)->postJson('/api/clients', [
             'name' => 'PT Contoh Jaya',
-            'pic_name' => 'Budi',
+            'pic_name' => 'Budi', 'address' => 'Alamat uji', 'phone' => '0812000000',
             'email' => 'budi@contoh.co.id',
         ]);
 
@@ -67,7 +67,7 @@ class ClientApiTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $client = Client::factory()->create(['name' => 'Lama']);
 
-        $this->actingAs($admin)->putJson("/api/clients/{$client->id}", ['name' => 'Baru'])
+        $this->actingAs($admin)->putJson("/api/clients/{$client->id}", ['name' => 'Baru', 'pic_name' => 'PIC', 'address' => 'Alamat', 'phone' => '0812000000', 'email' => 'qa@example.test'])
             ->assertOk()->assertJsonPath('data.name', 'Baru');
     }
 

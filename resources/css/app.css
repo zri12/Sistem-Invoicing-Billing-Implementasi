@@ -39,3 +39,6 @@ button, input, select, textarea { font: inherit; } button { cursor: pointer; } b
 .sidebar-nav { scrollbar-width: none; } .sidebar-nav::-webkit-scrollbar { display: none; } ::-webkit-scrollbar { width: 5px; height: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #E2E6EC; border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: #C8D0DA; }
 .ui-field { height: 36px; width: 100%; border: 1px solid #E2E6EC; border-radius: 6px; background: #fff; color: #172033; font-size: 13px; outline: none; transition: border-color .15s, box-shadow .15s; } .ui-field:focus { border-color: #173B6C; box-shadow: 0 0 0 3px rgba(23, 59, 108, .08); } .ui-field:disabled { background: #F9FAFB; color: #667085; } .ui-field--error { border-color: #DC2626; } .ui-field--error:focus { box-shadow: 0 0 0 3px rgba(220, 38, 38, .08); }
 @media (max-width: 1023px) { main .foundation-grid-three { grid-template-columns: minmax(0, 1fr); } } @media (max-width: 639px) { .foundation-page { padding: 1rem; } .foundation-header { align-items: flex-start; flex-direction: column; gap: .875rem; } .foundation-grid-two, .foundation-grid-three { grid-template-columns: minmax(0, 1fr); } }
+
+/* Let textarea rows control its height instead of the single-line field height. */
+textarea.ui-field { height: auto; min-height: 100px; }

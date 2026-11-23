@@ -29,11 +29,11 @@ class VendorApiTest extends TestCase
 
         $this->actingAs($manager)->postJson('/api/vendors', ['name' => 'CV Contoh'])->assertStatus(403);
 
-        $created = $this->actingAs($admin)->postJson('/api/vendors', ['name' => 'CV Contoh'])->assertCreated();
+        $created = $this->actingAs($admin)->postJson('/api/vendors', ['name' => 'CV Contoh', 'pic_name' => 'PIC', 'address' => 'Alamat', 'phone' => '0812000000', 'email' => 'qa@example.test'])->assertCreated();
         $vendorId = $created->json('data.id');
 
         $this->actingAs($manager)->putJson("/api/vendors/{$vendorId}", ['name' => 'Baru'])->assertStatus(403);
-        $this->actingAs($admin)->putJson("/api/vendors/{$vendorId}", ['name' => 'Baru'])->assertOk();
+        $this->actingAs($admin)->putJson("/api/vendors/{$vendorId}", ['name' => 'Baru', 'pic_name' => 'PIC', 'address' => 'Alamat', 'phone' => '0812000000', 'email' => 'qa@example.test'])->assertOk();
 
         $this->actingAs($manager)->patchJson("/api/vendors/{$vendorId}/status")->assertStatus(403);
         $this->actingAs($admin)->patchJson("/api/vendors/{$vendorId}/status")->assertOk()

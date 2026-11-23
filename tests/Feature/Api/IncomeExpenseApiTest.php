@@ -21,7 +21,7 @@ class IncomeExpenseApiTest extends TestCase
         $account = Account::factory()->create();
 
         $response = $this->actingAs($admin)->postJson('/api/incomes', [
-            'income_date' => now()->toDateString(),
+            'income_date' => now()->toDateString(), 'source' => 'Lain-lain',
             'category' => 'Pendapatan Lainnya',
             'description' => 'Sewa alat',
             'amount' => 500000,
@@ -40,7 +40,7 @@ class IncomeExpenseApiTest extends TestCase
         $account = Account::factory()->create();
 
         $response = $this->actingAs($admin)->postJson('/api/incomes', [
-            'income_date' => now()->toDateString(),
+            'income_date' => now()->toDateString(), 'source' => 'Lain-lain',
             'category' => 'Pendapatan Jasa',
             'description' => 'Coba forge',
             'amount' => 500000,

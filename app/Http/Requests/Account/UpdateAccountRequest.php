@@ -15,8 +15,8 @@ class UpdateAccountRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'account_number' => ['nullable', 'string', 'max:100'],
-            'account_holder' => ['nullable', 'string', 'max:255'],
+            'account_number' => ['nullable', 'string', 'max:100', new \App\Rules\UniqueMasterValue(\App\Models\Account::class, 'account_number', 'Nomor rekening', $this->route('account'))],
+            'account_holder' => ['required', 'string', 'max:255'],
             'branch' => ['nullable', 'string', 'max:255'],
             'opening_balance' => ['nullable', 'numeric', 'min:0'],
         ];

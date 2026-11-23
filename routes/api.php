@@ -32,6 +32,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum', ReleaseReadOnlySession::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/recent-activity', \App\Http\Controllers\Api\RecentActivityController::class);
 
     Route::get('/clients/{client}/invoices', [ClientController::class, 'invoices']);
     Route::patch('/clients/{client}/status', [ClientController::class, 'updateStatus']);

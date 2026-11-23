@@ -175,12 +175,14 @@
         <p style="margin: 0;">{{ $invoice->paymentAccount->account_holder ?: $company->name }}</p>
         @if($invoice->paymentAccount->branch)<p style="margin: 0;">{{ $invoice->paymentAccount->branch }}</p>@endif
         @endif
-        @if($template->show_terms)
+        @php($terms = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $invoice->payment_terms ?? ''))))
+        @if($template->show_terms && count($terms))
         <div style="margin-top: 28px;">
             <b>Terms &amp; Condition:</b>
             <ul style="margin: 11px 0 0; padding-left: 16px;">
-                <li>{{ $invoice->payment_terms ?: 'Silakan lakukan pembayaran ke rekening yang tertera di atas.' }}</li>
-                <li>Mohon konfirmasi pembayaran melalui email balasan pada email tagihan ini.</li>
+                @foreach($terms as $term)
+                <li>{{ $term }}</li>
+                @endforeach
             </ul>
         </div>
         @endif

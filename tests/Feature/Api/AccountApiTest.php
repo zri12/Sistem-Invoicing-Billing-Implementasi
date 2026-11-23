@@ -25,7 +25,7 @@ class AccountApiTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $manager = User::factory()->create(['role' => 'manager']);
-        $payload = ['name' => 'BCA', 'account_number' => '123456', 'branch' => 'Cimahi'];
+        $payload = ['name' => 'BCA', 'account_number' => '123456', 'account_holder' => 'Penguji', 'branch' => 'Cimahi'];
 
         $this->actingAs($manager)->postJson('/api/accounts', $payload)->assertStatus(403);
 

@@ -27,11 +27,9 @@ class CompanyController extends Controller
 
         foreach (['logo', 'stamp', 'signature'] as $field) {
             if ($request->hasFile($field)) {
-                $existing = $company->{"{$field}_path"};
-                if ($existing) {
-                    Storage::disk('public')->delete($existing);
-                }
-                $data["{$field}_path"] = $request->file($field)->store('company', 'public');
+                $path = $request->file($field)->store('company', 'public');
+                if (! $path) throw new \RuntimeException('Gagal menyimpan gambar perusahaan.');
+                $data["{$field}_path"] = $path;
             }
         }
 

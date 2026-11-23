@@ -6,6 +6,7 @@ import { useInvoiceStore } from '@/stores/invoice';
 import { usePaymentStore } from '@/stores/payment';
 import { useSettingsStore } from '@/stores/settings';
 import { useUsersStore } from '@/stores/users';
+import { useUiStore } from '@/stores/ui';
 import Login from '@/views/auth/Login.vue';
 import Dashboard from '@/views/dashboard/Dashboard.vue';
 import Clients from '@/views/master-data/Clients.vue';
@@ -50,9 +51,9 @@ const preloadPageData = async (to) => {
         billing: () => Promise.all([invoices.ensure(), payments.ensure()]),
         'billing-detail': () => Promise.all([invoices.fetchOne(to.params.invoiceId), payments.ensure()]),
         pembayaran: () => payments.ensure(),
-        pemasukan: () => Promise.all([finance.ensureIncomes(), masterData.ensureAll()]),
-        pengeluaran: () => Promise.all([finance.ensureExpenses(), masterData.ensureAll()]),
-        laporan: () => Promise.all([invoices.ensure(), payments.ensure(), finance.ensure(), masterData.ensureAll()]),
+        pemasukan: () => Promise.all([finance.ensureIncomes(), masterData.ensure('account')]),
+        pengeluaran: () => Promise.all([finance.ensureExpenses(), masterData.ensure('vendor'), masterData.ensure('account')]),
+        laporan: () => Promise.all([invoices.ensure(), payments.ensure(), finance.ensure(), masterData.ensure('account')]),
         'data-perusahaan': () => settings.ensure(),
         'template-invoice': () => Promise.all([settings.ensure(), invoices.ensure(), masterData.ensureAll()]),
         'penomoran-invoice': () => settings.ensure(),
@@ -90,8 +91,12 @@ const router = createRouter({
     ],
 });
 
+let navigationSequence = 0;
 router.beforeEach(async (to) => {
+    const sequence = ++navigationSequence;
     const auth = useAuthStore();
+    const ui = useUiStore();
+    ui.pageLoading = false;
     // Vue Router resolves its first navigation as soon as the router is
     // installed, before app.js's async session check can finish — so on a
     // hard refresh this guard would otherwise see a not-yet-hydrated store
@@ -102,22 +107,23 @@ router.beforeEach(async (to) => {
     if (to.meta.authRequired && !auth.isAuthenticated) return { name: 'login' };
     if (to.meta.guestOnly && auth.isAuthenticated) return { name: 'dashboard' };
     if (to.meta.adminOnly && auth.role !== 'admin') return { name: to.name === 'pengguna' ? 'dashboard' : 'invoice' };
-    // Pada hard refresh, tunggu hanya data halaman tujuan agar tidak ada angka
-    // nol palsu. Setelah login, bootstrap sudah mengisi seluruh store sehingga
-    // perpindahan menu tidak lagi menunggu banyak endpoint.
-    if (to.meta.authRequired && restoringSession) {
-        try {
-            await preloadPageData(to);
-        } catch (error) {
-            console.error('Gagal menyiapkan data halaman.', error);
-        }
-        return;
+    if (to.meta.authRequired) {
+        ui.pageLoading = true;
+        ui.pageLoadError = '';
+        const loadPage = async () => {
+            try {
+                await preloadPageData(to);
+            } catch (error) {
+                if (sequence === navigationSequence) ui.pageLoadError = 'Data belum dapat dimuat. Periksa koneksi dan coba lagi.';
+            } finally {
+                if (sequence === navigationSequence) ui.pageLoading = false;
+            }
+        };
+        // After a refresh, render the authenticated layout while page data loads.
+        // Preview uses a standalone layout and continues to wait for its data.
+        if (restoringSession && to.meta.layout === 'app') void loadPage();
+        else await loadPage();
     }
-    // Data dipanaskan di latar belakang. Navigasi tidak boleh menunggu API;
-    // menu dan tombol Kembali harus berpindah seketika.
-    void preloadPageData(to).catch((error) => {
-        console.error('Gagal memuat data halaman.', error);
-    });
 });
 router.afterEach(() => { document.title = 'Sistem Invoicing & Billing | DEVSPACE'; });
 export default router;

@@ -47,6 +47,8 @@ class InvoiceService
     public function update(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
+            // Serialize edits with payments, which lock the same invoice row.
+            $invoice = Invoice::query()->lockForUpdate()->findOrFail($invoice->id);
             if ($invoice->document_status === 'cancelled') {
                 throw ValidationException::withMessages([
                     'document_status' => ['Invoice yang sudah dibatalkan tidak dapat diedit.'],
@@ -57,6 +59,13 @@ class InvoiceService
             $subtotal = array_sum(array_column($items, 'total'));
             $discount = (float) ($data['discount'] ?? 0);
             $this->validateDiscount($discount, $subtotal);
+
+            $totalPaid = (float) $invoice->payments()->sum('amount');
+            if (round($subtotal - $discount, 2) < $totalPaid) {
+                throw ValidationException::withMessages([
+                    'items' => ['Total invoice tidak boleh lebih kecil daripada pembayaran yang sudah tercatat.'],
+                ]);
+            }
 
             // invoice_number and document_status are intentionally never
             // touched here - number is immutable after creation, and status

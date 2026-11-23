@@ -15,10 +15,10 @@ class StoreProductServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'name' => ['required', 'string', 'max:255', new \App\Rules\UniqueMasterValue(\App\Models\ProductService::class, 'name', 'Nama produk / layanan')],
+            'description' => ['required', 'string'],
             'default_price' => ['required', 'numeric', 'min:0'],
-            'unit' => ['nullable', 'string', 'max:50'],
+            'unit' => ['required', 'string', 'max:50'],
         ];
     }
 }

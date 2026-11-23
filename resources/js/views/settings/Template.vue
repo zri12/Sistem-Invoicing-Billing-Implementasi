@@ -47,6 +47,7 @@ onMounted(async () => {
 });
 
 const save = async () => {
+    if (!form.title?.trim()) { ui.notify('Judul invoice wajib diisi.', 'error'); return; }
     try {
         await settings.saveTemplate(form);
         ui.notify('Template berhasil disimpan.');
@@ -69,7 +70,7 @@ const save = async () => {
         <div class="grid gap-6 xl:grid-cols-5">
             <BaseCard class="space-y-3 xl:col-span-2" padding="p-5">
                 <h2 class="text-sm font-semibold">Elemen Invoice</h2>
-                <BaseInput v-model="form.title" label="Judul Invoice" :disabled="readOnly" />
+                <BaseInput v-model="form.title" label="Judul Invoice" required :disabled="readOnly" />
                 <label v-for="field in controls" :key="field[0]" class="flex items-center justify-between gap-3 text-sm">
                     <span>{{ field[1] }}</span>
                     <input v-model="form[field[0]]" type="checkbox" :disabled="readOnly" />

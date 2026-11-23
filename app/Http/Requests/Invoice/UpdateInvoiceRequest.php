@@ -20,7 +20,7 @@ class UpdateInvoiceRequest extends FormRequest
             'due_date' => ['required', 'date', 'after_or_equal:invoice_date'],
             'payment_account_id' => ['required', 'integer', 'exists:accounts,id'],
             'discount' => ['nullable', 'numeric', 'min:0'],
-            'payment_terms' => ['nullable', 'string'],
+            'payment_terms' => ['required', 'string'],
             'invoice_notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_service_id' => ['nullable', 'integer', 'exists:products_services,id'],

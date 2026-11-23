@@ -19,7 +19,7 @@ class SettingsUsersApiTest extends TestCase
 
         $response = $this->actingAs($admin)->post('/api/company', [
             '_method' => 'PUT',
-            'name' => 'PT. Ruang Kreasi Aplikasi',
+            'name' => 'PT. Ruang Kreasi Aplikasi', 'code' => 'RKA', 'address' => 'Alamat uji', 'phone' => '0812000000', 'email' => 'qa@example.test', 'website' => 'example.test', 'signer_name' => 'Penguji', 'signer_title' => 'Direktur',
             'tagline' => 'Digital Transformation',
             'signing_city' => 'Cimahi',
             'logo' => UploadedFile::fake()->image('logo.png'),

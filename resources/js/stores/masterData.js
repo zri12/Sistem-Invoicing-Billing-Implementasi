@@ -15,10 +15,10 @@ export const useMasterDataStore = defineStore('masterData', {
     getters: {
         recordsFor: (state) => (kind) => state[pluralFor[kind]] || [],
         activeRecordsFor: (state) => (kind) => (state[pluralFor[kind]] || []).filter((record) => record.status === 'aktif'),
-        getClientById: (state) => (id) => state.clients.find((record) => record.id === id),
-        getVendorById: (state) => (id) => state.vendors.find((record) => record.id === id),
-        getProductById: (state) => (id) => state.products.find((record) => record.id === id),
-        getAccountById: (state) => (id) => state.accounts.find((record) => record.id === id),
+        getClientById: (state) => (id) => state.clients.find((record) => String(record.id) === String(id)),
+        getVendorById: (state) => (id) => state.vendors.find((record) => String(record.id) === String(id)),
+        getProductById: (state) => (id) => state.products.find((record) => String(record.id) === String(id)),
+        getAccountById: (state) => (id) => state.accounts.find((record) => String(record.id) === String(id)),
     },
     actions: {
         async fetch(kind) {

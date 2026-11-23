@@ -79,7 +79,7 @@ class InvoiceController extends Controller
         $this->authorize('publish', $invoice);
         $invoice = $this->service->publish($invoice);
 
-        return $this->success(new InvoiceResource($invoice), 'Invoice berhasil diterbitkan.');
+        return $this->success(new InvoiceResource($invoice->load(['client', 'paymentAccount', 'items'])), 'Invoice berhasil diterbitkan.');
     }
 
     public function cancel(Invoice $invoice)
@@ -87,7 +87,7 @@ class InvoiceController extends Controller
         $this->authorize('cancel', $invoice);
         $invoice = $this->service->cancel($invoice);
 
-        return $this->success(new InvoiceResource($invoice), 'Invoice berhasil dibatalkan.');
+        return $this->success(new InvoiceResource($invoice->load(['client', 'paymentAccount', 'items'])), 'Invoice berhasil dibatalkan.');
     }
 
     public function preview(Invoice $invoice)

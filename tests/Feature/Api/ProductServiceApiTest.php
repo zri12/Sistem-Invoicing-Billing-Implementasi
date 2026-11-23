@@ -25,7 +25,7 @@ class ProductServiceApiTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $manager = User::factory()->create(['role' => 'manager']);
-        $payload = ['name' => 'Jasa Baru', 'default_price' => 1000000, 'unit' => 'project'];
+        $payload = ['name' => 'Jasa Baru', 'description' => 'Jasa uji', 'default_price' => 1000000, 'unit' => 'project'];
 
         $this->actingAs($manager)->postJson('/api/products-services', $payload)->assertStatus(403);
 

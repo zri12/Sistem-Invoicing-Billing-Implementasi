@@ -77,6 +77,24 @@ class InvoicePdfApiTest extends TestCase
         $this->assertSame($download->getContent(), $print->getContent());
     }
 
+    public function test_invoice_document_displays_only_the_saved_terms(): void
+    {
+        $invoice = Invoice::factory()->create(['payment_terms' => "Bayar melalui rekening perusahaan.\nKonfirmasi melalui telepon."]);
+        InvoiceItem::factory()->for($invoice)->create();
+        $invoice->load(['client', 'paymentAccount', 'items']);
+        $company = \App\Models\Company::create(['name' => 'Perusahaan Uji']);
+        $template = \App\Models\InvoiceTemplateSetting::create(['show_terms' => true]);
+
+        $html = view('pdf.invoice', [
+            'invoice' => $invoice, 'company' => $company, 'template' => $template,
+            'logoPath' => null, 'stampPath' => null, 'signaturePath' => null, 'signatureFramePath' => null,
+        ])->render();
+
+        $this->assertStringContainsString('<li>Bayar melalui rekening perusahaan.</li>', $html);
+        $this->assertStringContainsString('<li>Konfirmasi melalui telepon.</li>', $html);
+        $this->assertStringNotContainsString('Mohon konfirmasi pembayaran melalui email balasan pada email tagihan ini.', $html);
+    }
+
     public function test_resilient_renderer_never_generates_the_plain_courier_pdf(): void
     {
         $invoice = Invoice::factory()

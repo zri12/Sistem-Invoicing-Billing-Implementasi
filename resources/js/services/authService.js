@@ -1,4 +1,4 @@
-import api from '@/services/api';
+import api, { refreshCsrf } from '@/services/api';
 import { incomeFromApi, expenseFromApi } from '@/services/financeService';
 import { invoiceFromApi } from '@/services/invoiceService';
 import { masterDataFromApi } from '@/services/masterDataService';
@@ -7,6 +7,7 @@ import { companyFromApi, numberingFromApi, templateFromApi } from '@/services/se
 
 export default {
     async login(username, password) {
+        await refreshCsrf();
         const { data } = await api.post('/login', { username, password });
         const { bootstrap, ...user } = data.data;
 

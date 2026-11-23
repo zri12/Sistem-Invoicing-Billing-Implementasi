@@ -14,11 +14,11 @@ class UpdateClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'pic_name' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'name' => ['required', 'string', 'max:255', new \App\Rules\UniqueMasterValue(\App\Models\Client::class, 'name', 'Nama klien / perusahaan', $this->route('client'))],
+            'pic_name' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string'],
+            'phone' => ['required', 'string', 'max:50'],
+            'email' => ['required', 'email', 'max:255'],
             'notes' => ['nullable', 'string'],
         ];
     }
