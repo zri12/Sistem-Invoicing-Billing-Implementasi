@@ -16,9 +16,9 @@ class StorePaymentRequest extends FormRequest
     {
         return [
             'payment_date' => ['required', 'date'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
+            'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01'],
             'method' => ['required', 'in:cash,transfer,cheque,qris'],
-            'account_id' => ['required', 'integer', 'exists:accounts,id'],
+            'account_id' => ['required', 'integer', 'exists:accounts,id,status,aktif'],
             'reference_number' => ['nullable', 'string', 'max:255'],
             'proof' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
             'notes' => ['nullable', 'string'],

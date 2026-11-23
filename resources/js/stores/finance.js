@@ -30,7 +30,7 @@ export const useFinanceStore = defineStore('finance', {
         async ensure() { await Promise.all([this.ensureIncomes(), this.ensureExpenses()]); },
         async addManualIncome(income) {
             const amount = Number(income.amount || 0);
-            if (!income.date || !income.source?.trim() || !income.accountId || !income.category?.trim() || !income.description?.trim() || amount <= 0) throw new Error('Lengkapi tanggal, sumber, kategori, rekening, keterangan, dan nominal pemasukan.');
+            if (!income.date || !income.sourceDetail?.trim() || !income.accountId || !income.category?.trim() || !income.description?.trim() || amount <= 0) throw new Error('Lengkapi tanggal, sumber, kategori, rekening, keterangan, dan nominal pemasukan.');
             try {
                 const record = await financeService.createIncome({ ...income, amount });
                 this.incomes = [record, ...this.incomes];
@@ -41,7 +41,7 @@ export const useFinanceStore = defineStore('finance', {
         },
         async updateManualIncome(id, income) {
             const amount = Number(income.amount || 0);
-            if (!income.date || !income.source?.trim() || !income.accountId || !income.category?.trim() || !income.description?.trim() || amount <= 0) throw new Error('Lengkapi tanggal, sumber, kategori, rekening, keterangan, dan nominal pemasukan.');
+            if (!income.date || !income.sourceDetail?.trim() || !income.accountId || !income.category?.trim() || !income.description?.trim() || amount <= 0) throw new Error('Lengkapi tanggal, sumber, kategori, rekening, keterangan, dan nominal pemasukan.');
             try {
                 const record = await financeService.updateIncome(id, { ...income, amount });
                 this.incomes = this.incomes.map((item) => item.id === id ? record : item);

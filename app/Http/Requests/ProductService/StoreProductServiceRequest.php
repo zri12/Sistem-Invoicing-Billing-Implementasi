@@ -17,8 +17,9 @@ class StoreProductServiceRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', new \App\Rules\UniqueMasterValue(\App\Models\ProductService::class, 'name', 'Nama produk / layanan')],
             'description' => ['required', 'string'],
-            'default_price' => ['required', 'numeric', 'min:0'],
+            'default_price' => ['required', 'numeric', 'decimal:0,2', 'min:0'],
             'unit' => ['required', 'string', 'max:50'],
+            'status' => ['sometimes', 'in:aktif,nonaktif'],
         ];
     }
 }

@@ -19,6 +19,7 @@ class UpdateClientRequest extends FormRequest
             'address' => ['required', 'string'],
             'phone' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:255'],
+            'status' => ['sometimes', 'in:aktif,nonaktif'],
             'notes' => ['nullable', 'string'],
         ];
     }

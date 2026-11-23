@@ -10,6 +10,47 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_manager_denial_uses_the_api_error_format(): void
+    {
+        $manager = User::factory()->create(['role' => 'manager']);
+        $this->actingAs($manager)->postJson('/api/clients', [])
+            ->assertForbidden()->assertJsonPath('success', false)
+            ->assertJsonStructure(['message']);
+    }
+
+    public function test_session_and_financial_responses_cannot_be_restored_from_http_cache(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        foreach (['/api/me', '/api/invoices', '/api/payments'] as $url) {
+            $response = $this->getJson($url)->assertOk();
+            $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+        }
+    }
+
+    public function test_login_bootstrap_and_refresh_use_the_same_invoice_order(): void
+    {
+        $user = User::factory()->create(['username' => 'order-admin', 'password' => bcrypt('secret123'), 'role' => 'admin']);
+        \App\Models\Invoice::factory()->count(3)->create(['invoice_date' => '2026-11-17']);
+        $initial = $this->postJson('/api/login', ['username' => $user->username, 'password' => 'secret123'])
+            ->assertOk()->json('data.bootstrap.invoices');
+        $refreshed = $this->getJson('/api/invoices')->assertOk()->json('data.items');
+        $this->assertSame(array_column($refreshed, 'id'), array_column($initial, 'id'));
+    }
+
+    public function test_user_can_login_from_local_port_8001(): void
+    {
+        $user = User::factory()->create([
+            'username' => 'local-user',
+            'password' => bcrypt('secret123'),
+            'status' => 'aktif',
+        ]);
+
+        $this->withHeader('Referer', 'http://127.0.0.1:8001/login')
+            ->postJson('/api/login', ['username' => 'local-user', 'password' => 'secret123'])
+            ->assertOk()
+            ->assertJsonPath('data.id', $user->id);
+    }
+
     public function test_active_user_can_login_with_valid_credentials(): void
     {
         $user = User::factory()->create([

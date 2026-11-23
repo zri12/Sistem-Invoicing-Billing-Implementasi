@@ -26,6 +26,9 @@ class Payment extends Model
     protected function casts(): array
     {
         return [
+            'invoice_id' => 'integer',
+            'account_id' => 'integer',
+            'created_by' => 'integer',
             'payment_date' => 'date',
             'amount' => 'decimal:2',
         ];

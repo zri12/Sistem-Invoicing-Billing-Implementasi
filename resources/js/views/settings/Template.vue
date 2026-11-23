@@ -68,7 +68,7 @@ const save = async () => {
         </header>
 
         <div class="grid gap-6 xl:grid-cols-5">
-            <BaseCard class="space-y-3 xl:col-span-2" padding="p-5">
+            <BaseCard class="min-w-0 space-y-3 xl:col-span-2" padding="p-5">
                 <h2 class="text-sm font-semibold">Elemen Invoice</h2>
                 <BaseInput v-model="form.title" label="Judul Invoice" required :disabled="readOnly" />
                 <label v-for="field in controls" :key="field[0]" class="flex items-center justify-between gap-3 text-sm">
@@ -77,7 +77,7 @@ const save = async () => {
                 </label>
             </BaseCard>
 
-            <BaseCard class="xl:col-span-3" padding="p-5">
+            <BaseCard class="min-w-0 xl:col-span-3" padding="p-5">
                 <p class="mb-3 text-center text-xs text-[#667085]">Preview Template (data invoice terbaru)</p>
                 <div v-if="templateInvoice" class="overflow-auto">
                     <InvoiceDocument

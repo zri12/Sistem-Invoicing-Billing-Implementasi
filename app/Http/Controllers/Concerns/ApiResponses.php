@@ -10,6 +10,6 @@ trait ApiResponses
             'success' => true,
             'message' => $message,
             'data' => $data,
-        ], $status);
+        ], $status)->header('Cache-Control', 'private, no-store, no-cache, must-revalidate');
     }
 }

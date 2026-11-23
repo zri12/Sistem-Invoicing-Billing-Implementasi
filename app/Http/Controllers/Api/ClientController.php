@@ -23,7 +23,7 @@ class ClientController extends Controller
             ->withCount('invoices')
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%'.$request->string('search').'%'))
-            ->orderBy('name')
+            ->orderBy('name')->orderBy('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([
@@ -39,9 +39,9 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request)
     {
-        $client = Client::create([...$request->validated(), 'status' => 'aktif']);
+        $client = Client::create([...$request->validated(), 'status' => $request->validated('status') ?? 'aktif']);
 
-        return $this->success(new ClientResource($client), 'Klien berhasil ditambahkan.', 201);
+        return $this->success(new ClientResource($client->loadCount('invoices')), 'Klien berhasil ditambahkan.', 201);
     }
 
     public function show(Client $client)
@@ -49,14 +49,14 @@ class ClientController extends Controller
         $this->authorize('view', $client);
         $client->loadCount('invoices');
 
-        return $this->success(new ClientResource($client));
+        return $this->success(new ClientResource($client->loadCount('invoices')));
     }
 
     public function update(UpdateClientRequest $request, Client $client)
     {
         $client->update($request->validated());
 
-        return $this->success(new ClientResource($client), 'Data klien berhasil diperbarui.');
+        return $this->success(new ClientResource($client->loadCount('invoices')), 'Data klien berhasil diperbarui.');
     }
 
     public function updateStatus(Client $client)
@@ -64,7 +64,7 @@ class ClientController extends Controller
         $this->authorize('changeStatus', $client);
         $client->update(['status' => $client->status === 'aktif' ? 'nonaktif' : 'aktif']);
 
-        return $this->success(new ClientResource($client), 'Status klien berhasil diperbarui.');
+        return $this->success(new ClientResource($client->loadCount('invoices')), 'Status klien berhasil diperbarui.');
     }
 
     public function invoices(Client $client)

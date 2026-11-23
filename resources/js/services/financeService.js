@@ -1,8 +1,9 @@
-import api from '@/services/api';
+import api, { fetchAll } from '@/services/api';
 
 export const incomeFromApi = (i) => ({
     id: i.id,
     source: i.source_type === 'invoice' ? 'invoice' : 'manual',
+    sourceDetail: i.source || '',
     paymentId: i.payment_id,
     invoiceId: i.invoice_id,
     date: i.income_date,
@@ -33,7 +34,7 @@ export const expenseFromApi = (e) => ({
 const buildExpenseForm = (expense) => {
     const form = new FormData();
     form.append('expense_date', expense.date);
-    if (expense.vendorId) form.append('vendor_id', expense.vendorId);
+    form.append('vendor_id', expense.vendorId || '');
     form.append('category', expense.category);
     form.append('description', expense.description);
     form.append('amount', expense.amount);
@@ -42,20 +43,19 @@ const buildExpenseForm = (expense) => {
     if (expense.transactionType === 'transfer' && expense.destinationAccount) {
         form.append('destination_account', expense.destinationAccount);
     }
-    if (expense.referenceNumber) form.append('reference_number', expense.referenceNumber);
-    if (expense.notes) form.append('notes', expense.notes);
+    form.append('reference_number', expense.referenceNumber || '');
+    form.append('notes', expense.notes || '');
     if (expense.proofFile) form.append('proof', expense.proofFile);
     return form;
 };
 
 export default {
     async listIncomes() {
-        const { data } = await api.get('/incomes', { params: { per_page: 200 } });
-        return data.data.items.map(incomeFromApi);
+        return (await fetchAll('/incomes')).map(incomeFromApi);
     },
     async createIncome(income) {
         const { data } = await api.post('/incomes', {
-            income_date: income.date, source: income.source || null, category: income.category,
+            income_date: income.date, source: income.sourceDetail || null, category: income.category,
             description: income.description, amount: Number(income.amount) || 0,
             account_id: income.accountId, notes: income.notes || null,
         });
@@ -63,15 +63,14 @@ export default {
     },
     async updateIncome(id, income) {
         const { data } = await api.put(`/incomes/${id}`, {
-            income_date: income.date, source: income.source || null, category: income.category,
+            income_date: income.date, source: income.sourceDetail || null, category: income.category,
             description: income.description, amount: Number(income.amount) || 0,
             account_id: income.accountId, notes: income.notes || null,
         });
         return incomeFromApi(data.data);
     },
     async listExpenses() {
-        const { data } = await api.get('/expenses', { params: { per_page: 200 } });
-        return data.data.items.map(expenseFromApi);
+        return (await fetchAll('/expenses')).map(expenseFromApi);
     },
     async createExpense(expense) {
         const { data } = await api.post('/expenses', buildExpenseForm(expense));

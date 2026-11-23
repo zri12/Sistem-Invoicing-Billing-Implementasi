@@ -19,8 +19,8 @@ class StoreIncomeRequest extends FormRequest
             'source' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
-            'account_id' => ['required', 'integer', 'exists:accounts,id'],
+            'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01'],
+            'account_id' => ['required', 'integer', 'exists:accounts,id,status,aktif'],
             'notes' => ['nullable', 'string'],
         ];
     }

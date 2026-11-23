@@ -21,7 +21,7 @@ class ProductServiceController extends Controller
         $products = ProductService::query()
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%'.$request->string('search').'%'))
-            ->orderBy('name')
+            ->orderBy('name')->orderBy('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([
@@ -37,7 +37,7 @@ class ProductServiceController extends Controller
 
     public function store(StoreProductServiceRequest $request)
     {
-        $product = ProductService::create([...$request->validated(), 'status' => 'aktif']);
+        $product = ProductService::create([...$request->validated(), 'status' => $request->validated('status') ?? 'aktif']);
 
         return $this->success(new ProductServiceResource($product), 'Produk & layanan berhasil ditambahkan.', 201);
     }

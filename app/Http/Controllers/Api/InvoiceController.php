@@ -32,7 +32,7 @@ class InvoiceController extends Controller
                 $term = '%'.$request->string('search').'%';
                 $q->where(fn ($sub) => $sub->where('invoice_number', 'like', $term)->orWhere('invoice_name', 'like', $term));
             })
-            ->latest('invoice_date')
+            ->latest('invoice_date')->latest('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([

@@ -27,6 +27,10 @@ class Income extends Model
     protected function casts(): array
     {
         return [
+            'payment_id' => 'integer',
+            'invoice_id' => 'integer',
+            'account_id' => 'integer',
+            'created_by' => 'integer',
             'income_date' => 'date',
             'amount' => 'decimal:2',
         ];

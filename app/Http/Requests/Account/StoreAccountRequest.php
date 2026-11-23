@@ -18,8 +18,9 @@ class StoreAccountRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'account_number' => ['nullable', 'string', 'max:100', new \App\Rules\UniqueMasterValue(\App\Models\Account::class, 'account_number', 'Nomor rekening')],
             'account_holder' => ['required', 'string', 'max:255'],
+            'status' => ['sometimes', 'in:aktif,nonaktif'],
             'branch' => ['nullable', 'string', 'max:255'],
-            'opening_balance' => ['nullable', 'numeric', 'min:0'],
+            'opening_balance' => ['nullable', 'numeric', 'decimal:0,2', 'min:0'],
         ];
     }
 }

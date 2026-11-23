@@ -46,6 +46,7 @@ Atur koneksi database pada `.env`, lalu jalankan migration dan build frontend:
 
 ```bash
 php artisan migrate --seed
+php artisan storage:link
 npm run build
 php artisan serve
 ```

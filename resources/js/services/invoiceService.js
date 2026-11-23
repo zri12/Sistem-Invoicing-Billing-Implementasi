@@ -1,4 +1,4 @@
-import api from '@/services/api';
+import api, { fetchAll } from '@/services/api';
 
 export const invoiceFromApi = (inv) => ({
     id: inv.id,
@@ -45,6 +45,7 @@ const toApi = (form, status) => ({
     invoice_notes: form.notes || null,
     ...(status ? { document_status: status } : {}),
     items: form.items.map((item) => ({
+        ...(Number.isInteger(item.id) ? { id: item.id } : {}),
         product_service_id: item.productServiceId || null,
         description: item.description,
         price: Number(item.price) || 0,
@@ -54,8 +55,7 @@ const toApi = (form, status) => ({
 
 export default {
     async list() {
-        const { data } = await api.get('/invoices', { params: { per_page: 200 } });
-        return data.data.items.map(invoiceFromApi);
+        return (await fetchAll('/invoices')).map(invoiceFromApi);
     },
     async get(id) {
         const { data } = await api.get(`/invoices/${id}`);

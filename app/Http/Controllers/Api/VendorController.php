@@ -23,7 +23,7 @@ class VendorController extends Controller
             ->withCount('expenses')
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%'.$request->string('search').'%'))
-            ->orderBy('name')
+            ->orderBy('name')->orderBy('id')
             ->paginate($request->integer('per_page', 15));
 
         return $this->success([
@@ -39,9 +39,9 @@ class VendorController extends Controller
 
     public function store(StoreVendorRequest $request)
     {
-        $vendor = Vendor::create([...$request->validated(), 'status' => 'aktif']);
+        $vendor = Vendor::create([...$request->validated(), 'status' => $request->validated('status') ?? 'aktif']);
 
-        return $this->success(new VendorResource($vendor), 'Vendor berhasil ditambahkan.', 201);
+        return $this->success(new VendorResource($vendor->loadCount('expenses')), 'Vendor berhasil ditambahkan.', 201);
     }
 
     public function show(Vendor $vendor)
@@ -49,14 +49,14 @@ class VendorController extends Controller
         $this->authorize('view', $vendor);
         $vendor->loadCount('expenses');
 
-        return $this->success(new VendorResource($vendor));
+        return $this->success(new VendorResource($vendor->loadCount('expenses')));
     }
 
     public function update(UpdateVendorRequest $request, Vendor $vendor)
     {
         $vendor->update($request->validated());
 
-        return $this->success(new VendorResource($vendor), 'Data vendor berhasil diperbarui.');
+        return $this->success(new VendorResource($vendor->loadCount('expenses')), 'Data vendor berhasil diperbarui.');
     }
 
     public function updateStatus(Vendor $vendor)
@@ -64,7 +64,7 @@ class VendorController extends Controller
         $this->authorize('changeStatus', $vendor);
         $vendor->update(['status' => $vendor->status === 'aktif' ? 'nonaktif' : 'aktif']);
 
-        return $this->success(new VendorResource($vendor), 'Status vendor berhasil diperbarui.');
+        return $this->success(new VendorResource($vendor->loadCount('expenses')), 'Status vendor berhasil diperbarui.');
     }
 
     public function expenses(Vendor $vendor)

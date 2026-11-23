@@ -31,8 +31,9 @@ class PaymentService
                 ]);
             }
 
-            $totalPaid = (float) $locked->payments()->sum('amount');
-            $remaining = (float) $locked->total - $totalPaid;
+            // Compare integer cents: 0.30 - 0.10 must accept an exact 0.20 payment.
+            $totalPaid = (int) round((float) $locked->payments()->sum('amount') * 100);
+            $remaining = (int) round((float) $locked->total * 100) - $totalPaid;
 
             if ($remaining <= 0) {
                 throw ValidationException::withMessages([
@@ -40,7 +41,7 @@ class PaymentService
                 ]);
             }
 
-            $amount = (float) $data['amount'];
+            $amount = (int) round((float) $data['amount'] * 100);
 
             if ($amount <= 0) {
                 throw ValidationException::withMessages([
@@ -62,7 +63,7 @@ class PaymentService
 
             $payment = $locked->payments()->create([
                 'payment_date' => $data['payment_date'],
-                'amount' => $amount,
+                'amount' => $amount / 100,
                 'method' => $data['method'],
                 'account_id' => $data['account_id'],
                 'reference_number' => $data['reference_number'] ?? null,

@@ -29,6 +29,27 @@ class SettingsUsersApiTest extends TestCase
         $this->assertNotNull($response->json('data.logo_url'));
     }
 
+    public function test_company_images_use_same_origin_urls_on_a_different_port(): void
+    {
+        Storage::fake('public');
+        foreach (['logo', 'stamp', 'signature'] as $field) {
+            Storage::disk('public')->put('company/'.$field.'.png', 'image');
+        }
+        $admin = User::factory()->create(['role' => 'admin']);
+        $company = \App\Models\Company::factory()->create([
+            'logo_path' => 'company/logo.png',
+            'stamp_path' => 'company/stamp.png',
+            'signature_path' => 'company/signature.png',
+        ]);
+
+        $this->actingAs($admin)
+            ->getJson('http://127.0.0.1:8001/api/company')
+            ->assertOk()
+            ->assertJsonPath('data.logo_url', route('company.assets', 'logo', false))
+            ->assertJsonPath('data.stamp_url', route('company.assets', 'stamp', false))
+            ->assertJsonPath('data.signature_url', route('company.assets', 'signature', false));
+    }
+
     public function test_manager_cannot_update_company_but_can_read(): void
     {
         $manager = User::factory()->create(['role' => 'manager']);
@@ -106,5 +127,18 @@ class SettingsUsersApiTest extends TestCase
         $this->actingAs($admin)->postJson('/api/users', [
             'name' => 'X', 'username' => 'taken', 'password' => 'password123', 'role' => 'manager',
         ])->assertStatus(422)->assertJsonValidationErrors('username');
+    }
+
+    public function test_users_require_email_on_create_and_update(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin)->postJson('/api/users', [
+            'name' => 'User without email', 'username' => 'no-email', 'email' => null,
+            'password' => 'password123', 'role' => 'manager',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
+        $user = User::factory()->create(['role' => 'manager']);
+        $this->putJson('/api/users/'.$user->id, [
+            'name' => $user->name, 'username' => $user->username, 'email' => null, 'role' => 'manager',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
     }
 }

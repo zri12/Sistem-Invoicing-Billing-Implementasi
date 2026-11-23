@@ -1,4 +1,5 @@
-import api from '@/services/api';
+import api, { fetchAll } from '@/services/api';
+import { incomeFromApi } from '@/services/financeService';
 
 const methodFromApi = { transfer: 'Transfer Bank', cash: 'Kas', cheque: 'Cek', qris: 'QRIS' };
 
@@ -17,14 +18,14 @@ export const paymentFromApi = (p) => ({
     notes: p.notes || '',
     createdBy: p.created_by,
     createdAt: p.created_at,
+    income: p.income ? incomeFromApi(p.income) : null,
 });
 
 const methodToApi = { 'Transfer Bank': 'transfer', Kas: 'cash', Cek: 'cheque', QRIS: 'qris' };
 
 export default {
     async list() {
-        const { data } = await api.get('/payments', { params: { per_page: 200 } });
-        return data.data.items.map(paymentFromApi);
+        return (await fetchAll('/payments')).map(paymentFromApi);
     },
     async record(invoiceId, payment) {
         const form = new FormData();
